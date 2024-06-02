@@ -48,32 +48,49 @@ const VisitorData = () => {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Visitor List</h1>
-      <table className="min-w-full table-auto bg-red-500 rounded-lg overflow-hidden border border-spacing-4">
-        <thead>
-          <tr>
-            <th className="p-2">Latitude</th>
-            <th className="p-2">Longitude</th>
-            <th className="p-2">Location</th>
-            <th className="p-2">Timestamp</th>
-          </tr>
-        </thead>
-        <tbody>
-          {visitorList.map((visitor) => (
-            <tr key={visitor._id}>
-              <td className="p-2">{visitor.latitude}</td>
-              <td className="p-2">{visitor.longitude}</td>
-              <td className="p-2">
-                {visitor.location ? visitor.location : "Loading location..."}
-              </td>
-              <td className="p-2">
-                {new Date(visitor.createdAt).toLocaleString()}
-              </td>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6 text-center text-white">
+        Visitor List
+      </h1>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+          <thead>
+            <tr className="bg-blue-500 text-black">
+              <th className="p-4 text-left border-r border-gray-200">
+                Latitude
+              </th>
+              <th className="p-4 text-left border-r border-gray-200">
+                Longitude
+              </th>
+              <th className="p-4 text-left border-r border-gray-200">
+                Location
+              </th>
+              <th className="p-4 text-left">Timestamp</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {visitorList.map((visitor) => (
+              <tr
+                key={visitor._id}
+                className="odd:bg-gray-100 text-black even:bg-gray-50"
+              >
+                <td className="p-4 border-r border-gray-200">
+                  {visitor.latitude}
+                </td>
+                <td className="p-4 border-r border-gray-200">
+                  {visitor.longitude}
+                </td>
+                <td className="p-4 border-r border-gray-200">
+                  {visitor.location ? visitor.location : "Loading location..."}
+                </td>
+                <td className="p-4">
+                  {new Date(visitor.createdAt).toLocaleString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

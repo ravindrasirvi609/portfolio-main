@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Ravindra's Portfolio",
   description:
     "Discover the world of software engineering through Ravindra Sirvi's portfolio. As a skilled engineer, I've built a diverse range of projects spanning web, mobile, and cloud technologies. Dive in to explore my creations and let's chat about how we can innovate together!",
+  icons: {
+    icon: "/ravindra.jpg",
+  },
 };
 
 export default function RootLayout({

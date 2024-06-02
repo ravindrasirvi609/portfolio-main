@@ -66,6 +66,27 @@ const Home = () => {
       console.error("Error submitting location:", error);
     }
   };
+
+  useEffect(() => {
+    const audio = new Audio("/ravindra_audio.mp3");
+    console.log("Audio object created:", audio);
+
+    // Function to handle user interaction
+    const handleUserInteraction = () => {
+      audio.play().catch((error) => {
+        console.error("Error playing audio on user interaction:", error);
+      });
+      document.removeEventListener("click", handleUserInteraction);
+    };
+
+    // Add event listener for user interaction
+    document.addEventListener("click", handleUserInteraction);
+
+    return () => {
+      document.removeEventListener("click", handleUserInteraction);
+    };
+  }, []);
+
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden mx-auto sm:px-10 px-5">
       <div className="max-w-7xl w-full">

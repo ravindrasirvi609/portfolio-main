@@ -22,7 +22,7 @@ const VisitorData = () => {
           response.data.visitorList.map(async (visitor: any) => {
             try {
               const locationResponse = await axios.get(
-                `https://api.opencagedata.com/geocode/v1/json?q=${visitor.latitude}+${visitor.longitude}&key=${process.env.NEXT_PUBLIC_OPENCAGE_API_KEY}`
+                `https://api.opencagedata.com/geocode/v1/json?q=${visitor.latitude}+${visitor.longitude}&key=8a3f5e0784a942f0bfc8b2b2712261bc`
               );
 
               return {

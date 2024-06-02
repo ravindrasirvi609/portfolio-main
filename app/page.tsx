@@ -69,8 +69,6 @@ const Home = () => {
 
   useEffect(() => {
     const audio = new Audio("/ravindra_audio.mp3");
-    console.log("Audio object created:", audio);
-
     // Function to handle user interaction
     const handleUserInteraction = () => {
       audio.play().catch((error) => {

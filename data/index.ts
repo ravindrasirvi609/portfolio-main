@@ -1,11 +1,11 @@
 import { url } from "inspector";
 
 export const navItems = [
-  { name: "Old Version", link: "https://theravindrachoudhary.vercel.app/" },
   { name: "About", link: "#about" },
   { name: "Projects", link: "#projects" },
   { name: "Testimonials", link: "#testimonials" },
   { name: "Contact", link: "#contact" },
+  { name: "Old Version", link: "https://theravindrachoudhary.vercel.app/" },
 ];
 
 export const gridItems = [

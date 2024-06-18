@@ -12,6 +12,7 @@ import Experience from "@/components/Experience";
 import RecentProjects from "@/components/RecentProjects";
 import { FloatingNav } from "@/components/ui/FloatingNavbar";
 import { useEffect, useState } from "react";
+import Github from "@/components/Github";
 
 const Home = () => {
   const [location, setLocation] = useState<{
@@ -91,6 +92,7 @@ const Home = () => {
         <FloatingNav navItems={navItems} />
         <Hero />
         <Grid />
+        <Github />
         <RecentProjects />
         <Clients />
         <Experience />

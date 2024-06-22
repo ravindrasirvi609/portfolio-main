@@ -36,6 +36,10 @@ export default function RootLayout({
           {children}
           <Analytics />
         </ThemeProvider>
+        <script
+          async
+          src="https://api.cronbot.ai/v1/widgets/app/app_afufv512myio"
+        ></script>
       </body>
     </html>
   );

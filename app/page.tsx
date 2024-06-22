@@ -86,6 +86,16 @@ const Home = () => {
     };
   }, []);
 
+  useEffect(() => {
+    // This code now runs only on the client side
+    const element = document.querySelector(".cb-legal-text");
+
+    if (element) {
+      element.removeAttribute("href");
+      element.textContent = "";
+    }
+  }, []); // Empty dependency array means this runs once on mount
+
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden mx-auto sm:px-10 px-5">
       <div className="max-w-7xl w-full">

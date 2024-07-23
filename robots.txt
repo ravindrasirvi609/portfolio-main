@@ -1,0 +1,7 @@
+User-agent: *
+
+Disallow: /visitor-data
+
+Allow: /
+
+Sitemap: https://www.ravindrachoudhary.in/sitemap.xml

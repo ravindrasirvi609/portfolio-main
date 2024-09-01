@@ -106,6 +106,22 @@ export const projects = [
     iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
     link: "https://operant-biomedical.vercel.app/",
   },
+  {
+    id: 5,
+    title: "APTICON 2024",
+    des: "Developed a website for APTICON 2024 using Next.js 14, showcasing the conference's schedule, speakers, and sponsors. The website features a clean and modern design, providing an interactive and engaging user experience.",
+    img: "/Proj5.png",
+    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
+    link: "https://apticon2024.com",
+  },
+  {
+    id: 6,
+    title: "Pharmanecia 4.E",
+    des: "Developed a website for Pharmanecia 4.E using Next.js 14, showcasing the conference's schedule, speakers, and sponsors. The website features a clean and modern design, providing an interactive and engaging user experience.",
+    img: "/Proj6.png",
+    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
+    link: "https://pharmanecia.org",
+  },
 ];
 
 export const testimonials = [

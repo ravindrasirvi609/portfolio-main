@@ -13,7 +13,6 @@ import RecentProjects from "@/components/RecentProjects";
 import { FloatingNav } from "@/components/ui/FloatingNavbar";
 import { useEffect, useState } from "react";
 import Github from "@/components/Github";
-import CustomCursor from "@/components/CustomCursor";
 
 const Home = () => {
   const [location, setLocation] = useState<{

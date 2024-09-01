@@ -4,11 +4,35 @@ import "./globals.css";
 import { ThemeProvider } from "./provider";
 import { Analytics } from "@vercel/analytics/react";
 import CustomCursor from "@/components/CustomCursor";
-import { getSiteMetadata } from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = getSiteMetadata();
+export const metadata: Metadata = {
+  title: "Ravindra Sirvi | Software Engineer",
+  description:
+    "Experienced software engineer specializing in web, mobile, and cloud technologies. Explore my portfolio and projects.",
+  keywords:
+    "Ravindra Sirvi, software engineer, web development, mobile development, cloud technologies, portfolio",
+  authors: [{ name: "Ravindra Sirvi" }],
+  creator: "Ravindra Sirvi",
+  publisher: "Ravindra Sirvi",
+  openGraph: {
+    type: "website",
+    url: "https://www.ravindrachoudhary.in",
+    title: "Ravindra Sirvi | Software Engineer Portfolio",
+    description:
+      "Explore the work and projects of Ravindra Sirvi, a skilled software engineer specializing in cutting-edge technologies.",
+    images: [{ url: "https://www.ravindrachoudhary.in/ravindra.jpg" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    creator: "@ravindra_sirvi",
+    images: ["https://www.ravindrachoudhary.in/ravindra.jpg"],
+  },
+  alternates: {
+    canonical: "https://www.ravindrachoudhary.in",
+  },
+};
 
 export default function RootLayout({
   children,
@@ -19,7 +43,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/ravindra.jpg" sizes="any" />
-        <link rel="canonical" href="https://www.ravindrachoudhary.in" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -36,6 +59,20 @@ export default function RootLayout({
                 "https://github.com/ravindrasirvi609",
                 "https://twitter.com/ravindra_sirvi",
               ],
+              skills: [
+                "Web Development",
+                "Mobile Development",
+                "Cloud Technologies",
+                "JavaScript",
+                "TypeScript",
+                "React",
+                "Next.js",
+              ],
+              worksFor: {
+                "@type": "Organization",
+                name: "Freelance Software Engineer",
+              },
+              image: "https://www.ravindrachoudhary.in/ravindra.jpg",
             }),
           }}
         />

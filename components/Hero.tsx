@@ -1,8 +1,9 @@
 import React from "react";
-import { FaLocationArrow, FaWhatsapp } from "react-icons/fa6";
+import { FaBriefcase, FaLocationArrow, FaWhatsapp } from "react-icons/fa6";
 import MagicButton from "./MagicButton";
 import { Spotlight } from "./ui/Spotlight";
 import { TextGenerateEffect } from "./ui/TextGenerateEffect";
+import Link from "next/link";
 
 const Hero = () => {
   const whatsappNumber = "+918107199052";
@@ -48,20 +49,27 @@ const Hero = () => {
           </p>
 
           <div className="flex space-x-4">
-            <a href="#about">
+            <Link href="">
+              <MagicButton
+                title="Hire Me"
+                icon={<FaBriefcase />}
+                position="right"
+              />
+            </Link>
+            <Link href="#about">
               <MagicButton
                 title="Show my work"
                 icon={<FaLocationArrow />}
                 position="right"
               />
-            </a>
-            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+            </Link>
+            <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               <MagicButton
                 title="Contact Me"
                 icon={<FaWhatsapp />}
                 position="right"
               />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -13,6 +13,7 @@ import RecentProjects from "@/components/RecentProjects";
 import { FloatingNav } from "@/components/ui/FloatingNavbar";
 import { useEffect, useState } from "react";
 import Github from "@/components/Github";
+import CaptureVisitor from "@/components/userInformation";
 
 const Home = () => {
   const [location, setLocation] = useState<{
@@ -108,6 +109,7 @@ const Home = () => {
         <Experience />
         <Approach />
         <Footer />
+        <CaptureVisitor />
       </div>
     </main>
   );

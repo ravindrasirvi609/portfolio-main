@@ -3,7 +3,7 @@ export const navItems = [
   { name: "Projects", link: "#projects" },
   { name: "Testimonials", link: "#testimonials" },
   { name: "Contact", link: "#contact" },
-  { name: "Old Version", link: "https://theravindrachoudhary.vercel.app/" },
+  // { name: "Old Version", link: "https://theravindrachoudhary.vercel.app/" },
 ];
 
 export const gridItems = [

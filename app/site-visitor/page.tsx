@@ -19,11 +19,12 @@ interface Visitor {
 
 const VisitorList: React.FC = () => {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
-    const fetchVisitors = async () => {
+    const fetchVisitors = async (): Promise<void> => {
       try {
         const response = await axios.post("/api/siteVisitorList");
         setVisitors(response.data.visitorList);
@@ -37,56 +38,90 @@ const VisitorList: React.FC = () => {
     fetchVisitors();
   }, []);
 
-  if (loading) return <p className="text-center">Loading...</p>;
-  if (error) return <p className="text-red-500 text-center">{error}</p>;
+  const filteredVisitors = visitors.filter((visitor) =>
+    Object.values(visitor).some((value) =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="bg-red-100 backdrop-blur-md bg-opacity-80 p-4 rounded-lg shadow-lg">
+          <p className="text-red-500 text-center">{error}</p>
+        </div>
+      </div>
+    );
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Visitor List</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-          <thead>
-            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-              <th className="py-3 px-6 text-left">ID</th>
-              <th className="py-3 px-6 text-left">IP Address</th>
-              <th className="py-3 px-6 text-left">User Agent</th>
-              <th className="py-3 px-6 text-left">Browser</th>
-              <th className="py-3 px-6 text-left">Operating System</th>
-              <th className="py-3 px-6 text-left">Device Type</th>
-              <th className="py-3 px-6 text-left">Screen Resolution</th>
-              <th className="py-3 px-6 text-left">Referrer</th>
-              <th className="py-3 px-6 text-left">Language</th>
-              <th className="py-3 px-6 text-left">Session ID</th>
-              <th className="py-3 px-6 text-left">Created At</th>
-              <th className="py-3 px-6 text-left">Updated At</th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-600 text-sm font-light">
-            {visitors.map((visitor) => (
-              <tr
-                key={visitor._id}
-                className="border-b border-gray-200 hover:bg-gray-100"
-              >
-                <td className="py-3 px-6">{visitor._id}</td>
-                <td className="py-3 px-6">{visitor.ipAddress}</td>
-                <td className="py-3 px-6">{visitor.userAgent}</td>
-                <td className="py-3 px-6">{visitor.browser}</td>
-                <td className="py-3 px-6">{visitor.operatingSystem}</td>
-                <td className="py-3 px-6">{visitor.deviceType}</td>
-                <td className="py-3 px-6">{visitor.screenResolution}</td>
-                <td className="py-3 px-6">{visitor.referrer}</td>
-                <td className="py-3 px-6">{visitor.language}</td>
-                <td className="py-3 px-6">{visitor.sessionId}</td>
-                <td className="py-3 px-6">
-                  {new Date(visitor.createdAt).toLocaleString()}
-                </td>
-                <td className="py-3 px-6">
-                  {new Date(visitor.updatedAt).toLocaleString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-500 p-4 sm:p-6 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="backdrop-blur-md bg-white/30 rounded-xl p-6 shadow-xl border border-white/20">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+            Visitor Analytics
+          </h1>
+
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="Search visitors..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg bg-white/50 backdrop-blur-sm border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div className="overflow-x-auto rounded-lg">
+            <div className="inline-block min-w-full align-middle">
+              <div className="backdrop-blur-md bg-white/40 rounded-lg shadow-xl border border-white/30">
+                <table className="min-w-full divide-y divide-gray-200/30">
+                  <thead className="bg-gray-50/50">
+                    <tr>
+                      {Object.keys(visitors[0] || {}).map((key) => (
+                        <th
+                          key={key}
+                          className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+                        >
+                          {key.replace(/([A-Z])/g, " $1").trim()}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200/30 bg-white/20">
+                    {filteredVisitors.map((visitor) => (
+                      <tr
+                        key={visitor._id}
+                        className="hover:bg-white/40 transition-colors duration-200"
+                      >
+                        {Object.entries(visitor).map(([key, value]) => (
+                          <td
+                            key={key}
+                            className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap"
+                          >
+                            {key.includes("At")
+                              ? new Date(value).toLocaleString()
+                              : value}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 text-sm text-gray-600">
+            Showing {filteredVisitors.length} of {visitors.length} visitors
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,32 +1,82 @@
+import { NextResponse } from "next/server";
+import SiteVisitorModel from "@/model/siteVisitorModel";
 import { connect } from "@/dbConfig/dbConfig";
-import { NextRequest, NextResponse } from "next/server";
-import SiteVisitorModel from "../../../model/siteVisitorModel"; // Import the site visitor model
 
-connect();
-
-export async function POST(req: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const visitorDataFromBody = await req.json();
+    // Connect to database
+    await connect();
 
-    // Extract the IP address
-    const ipAddress = req.headers.get("x-forwarded-for") || req.ip || "Unknown";
+    // Get visitor data from request
+    const visitorData = await request.json();
 
-    // Combine the extracted IP with the provided data
-    const newVisitor = new SiteVisitorModel({
-      ...visitorDataFromBody,
-      ipAddress,
+    // Create new visitor document
+    const visitor = await SiteVisitorModel.create({
+      // Basic Information
+      ipAddress:
+        request.headers.get("x-forwarded-for") ||
+        request.headers.get("x-real-ip"),
+      userAgent: visitorData.userAgent,
+      browser: visitorData.browser,
+      browserVersion: visitorData.browserVersion,
+      operatingSystem: visitorData.operatingSystem,
+      deviceType: visitorData.deviceType,
+      deviceBrand: visitorData.deviceBrand,
+      deviceModel: visitorData.deviceModel,
+      screenResolution: visitorData.screenResolution,
+      referrer: visitorData.referrer,
+      language: visitorData.language,
+      sessionId: visitorData.sessionId,
+
+      // Enhanced Device Information
+      colorDepth: visitorData.colorDepth,
+      windowSize: visitorData.windowSize,
+      touchSupport: visitorData.touchSupport,
+      cookiesEnabled: visitorData.cookiesEnabled,
+      doNotTrack: visitorData.doNotTrack,
+      networkType: visitorData.networkType,
+      connectionSpeed: visitorData.connectionSpeed,
+      batteryLevel: visitorData.batteryLevel,
+      memoryUsage: visitorData.memoryUsage,
+
+      // Location & Time
+      timezone: visitorData.timezone,
+
+      // Performance Metrics
+      pageLoadTime: visitorData.pageLoadTime,
+      domLoadTime: visitorData.domLoadTime,
+      firstContentfulPaint: visitorData.firstContentfulPaint,
+      largestContentfulPaint: visitorData.largestContentfulPaint,
+
+      // User Preferences
+      colorScheme: visitorData.colorScheme,
+      fontSize: visitorData.fontSize,
+      accessibility: visitorData.accessibility,
+
+      // Session Information
+      firstVisit: visitorData.firstVisit,
+      returningVisitor: visitorData.returningVisitor,
+
+      // Initialize visit tracking
+      pageViews: 1,
+      visitedPages: [
+        {
+          url: visitorData.referrer || "/",
+          timestamp: new Date(),
+        },
+      ],
     });
-
-    await newVisitor.save();
-
-    await newVisitor.save(); // Save the visitor data to the database
 
     return NextResponse.json({
-      message: "Visitor added successfully",
-      visitor: newVisitor, // Return the saved visitor data
+      success: true,
+      message: "Visitor data captured successfully",
+      visitor,
     });
   } catch (error: any) {
-    console.error("Error adding visitor:", error);
-    return NextResponse.error(); // Return an error response
+    console.error("Error capturing visitor data:", error);
+    return NextResponse.json(
+      { error: "Failed to capture visitor data" },
+      { status: 500 }
+    );
   }
 }

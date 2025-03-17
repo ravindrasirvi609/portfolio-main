@@ -125,10 +125,13 @@ const CaptureVisitor = () => {
       const deviceInfo = getDeviceInfo(userAgent);
       const screenInfo = getScreenInfo();
       const networkInfo = await getNetworkInfo();
+      console.log("networkInfo", networkInfo);
+
       const performanceInfo = await getPerformanceMetrics();
       const batteryInfo = await getBatteryInfo();
       const accessibilityInfo = getAccessibilityInfo();
       const sessionInfo = await getSessionInfo();
+      console.log("batteryInfo", batteryInfo, "batteryInfo.batteryLevel");
 
       const visitorData: VisitorData = {
         ...deviceInfo,

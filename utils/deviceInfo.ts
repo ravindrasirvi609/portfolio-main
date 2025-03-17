@@ -1,5 +1,4 @@
-// deviceInfo.ts
-import UAParser from "ua-parser-js";
+import { UAParser } from "ua-parser-js";
 
 interface DeviceInfo {
   userAgent: string;
@@ -48,14 +47,20 @@ const getDeviceType = (userAgent: string): string => {
   return "Desktop";
 };
 
+// Create a new UAParser instance the correct way
 export const getDeviceInfo = (userAgent: string): DeviceInfo => {
-  // Create a new UAParser instance the correct way
+  // Create a new UAParser instance with the new keyword
   const parser = new UAParser(userAgent);
 
   // Get the parsed results
   const browser = parser.getBrowser();
+  console.log("Browser -----", browser);
+
   const os = parser.getOS();
+  console.log("OS -----", os);
+
   const device = parser.getDevice();
+  console.log("Device -----", device);
 
   return {
     userAgent,
@@ -89,6 +94,7 @@ export const getScreenInfo = (): ScreenInfo => {
 };
 
 export const getNetworkInfo = async (): Promise<NetworkInfo> => {
+  console.log("getNetworkInfo -----", navigator);
   if (typeof navigator === "undefined") {
     return {
       networkType: "Unknown",
@@ -101,6 +107,8 @@ export const getNetworkInfo = async (): Promise<NetworkInfo> => {
     (navigator as any).mozConnection ||
     (navigator as any).webkitConnection;
 
+  console.log("Connection -----", connection);
+
   return {
     networkType: connection?.type || "Unknown",
     connectionSpeed: connection?.effectiveType || "Unknown",
@@ -111,6 +119,8 @@ export const getNetworkInfo = async (): Promise<NetworkInfo> => {
 };
 
 export const getBatteryInfo = async (): Promise<BatteryInfo> => {
+  console.log("getBatteryInfo -----", navigator);
+
   if (typeof navigator === "undefined" || !("getBattery" in navigator)) {
     return {
       batteryLevel: null,
@@ -122,6 +132,8 @@ export const getBatteryInfo = async (): Promise<BatteryInfo> => {
 
   try {
     const battery = await (navigator as any).getBattery();
+    console.log("Battery -----", battery);
+
     return {
       batteryLevel: battery.level * 100,
       charging: battery.charging,

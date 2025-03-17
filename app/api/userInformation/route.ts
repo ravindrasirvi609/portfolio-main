@@ -9,6 +9,7 @@ export async function POST(request: Request) {
 
     // Get visitor data from request
     const visitorData = await request.json();
+    console.log("Received visitor data:", JSON.stringify(visitorData, null, 2));
 
     // Create new visitor document
     const visitor = await SiteVisitorModel.create({
@@ -41,6 +42,12 @@ export async function POST(request: Request) {
 
       // Location & Time
       timezone: visitorData.timezone,
+      country: visitorData.country,
+      city: visitorData.city,
+      region: visitorData.region,
+      latitude: visitorData.latitude,
+      longitude: visitorData.longitude,
+      isp: visitorData.isp,
 
       // Performance Metrics
       pageLoadTime: visitorData.pageLoadTime,
@@ -53,9 +60,17 @@ export async function POST(request: Request) {
       fontSize: visitorData.fontSize,
       accessibility: visitorData.accessibility,
 
+      // Marketing Data
+      utmSource: visitorData.utmSource,
+      utmMedium: visitorData.utmMedium,
+      utmCampaign: visitorData.utmCampaign,
+      utmTerm: visitorData.utmTerm,
+      utmContent: visitorData.utmContent,
+
       // Session Information
       firstVisit: visitorData.firstVisit,
       returningVisitor: visitorData.returningVisitor,
+      lastVisitDate: visitorData.returningVisitor ? new Date() : null,
 
       // Initialize visit tracking
       pageViews: 1,
@@ -63,10 +78,14 @@ export async function POST(request: Request) {
         {
           url: visitorData.referrer || "/",
           timestamp: new Date(),
+          duration: 0,
+          scrollDepth: 0,
+          interactionCount: 0,
         },
       ],
     });
 
+    console.log("Visitor data saved successfully:", visitor._id);
     return NextResponse.json({
       success: true,
       message: "Visitor data captured successfully",
@@ -75,7 +94,11 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("Error capturing visitor data:", error);
     return NextResponse.json(
-      { error: "Failed to capture visitor data" },
+      {
+        error: "Failed to capture visitor data",
+        message: error.message,
+        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+      },
       { status: 500 }
     );
   }

@@ -5,7 +5,11 @@ import { useEffect } from "react";
 import axios from "axios";
 
 import { getPerformanceMetrics } from "./performanceMetrics";
-import { startTracking, stopTracking } from "@/utils/visitorTracking";
+import {
+  startTracking,
+  stopTracking,
+  retryFailedRequests,
+} from "@/utils/visitorTracking";
 import {
   getBatteryInfo,
   getDeviceInfo,
@@ -41,6 +45,12 @@ interface VisitorData {
 
   // Location & Time
   timezone: string;
+  country: string | null;
+  city: string | null;
+  region: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  isp: string | null;
 
   // Performance Metrics
   pageLoadTime: number | null;
@@ -55,6 +65,13 @@ interface VisitorData {
     reducedMotion: boolean;
     highContrast: boolean;
   };
+
+  // Marketing Data
+  utmSource: string | null;
+  utmMedium: string | null;
+  utmCampaign: string | null;
+  utmTerm: string | null;
+  utmContent: string | null;
 
   // Session Info
   firstVisit: boolean;
@@ -116,6 +133,77 @@ const generateSessionId = (): string => {
   return `sess_${timestamp}_${randomNum}`;
 };
 
+const getUTMParameters = (): {
+  utmSource: string | null;
+  utmMedium: string | null;
+  utmCampaign: string | null;
+  utmTerm: string | null;
+  utmContent: string | null;
+} => {
+  if (typeof window === "undefined") {
+    return {
+      utmSource: null,
+      utmMedium: null,
+      utmCampaign: null,
+      utmTerm: null,
+      utmContent: null,
+    };
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  return {
+    utmSource: urlParams.get("utm_source"),
+    utmMedium: urlParams.get("utm_medium"),
+    utmCampaign: urlParams.get("utm_campaign"),
+    utmTerm: urlParams.get("utm_term"),
+    utmContent: urlParams.get("utm_content"),
+  };
+};
+
+const getLocationData = async (): Promise<{
+  country: string | null;
+  city: string | null;
+  region: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  isp: string | null;
+}> => {
+  try {
+    // Try to get location from browser geolocation API
+    if (navigator.geolocation) {
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            timeout: 5000,
+            maximumAge: 0,
+          });
+        }
+      );
+
+      return {
+        country: null, // We don't get country from geolocation API
+        city: null,
+        region: null,
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        isp: null,
+      };
+    }
+  } catch (error) {
+    console.error("Error getting geolocation:", error);
+  }
+
+  return {
+    country: null,
+    city: null,
+    region: null,
+    latitude: null,
+    longitude: null,
+    isp: null,
+  };
+};
+
 const CaptureVisitor = () => {
   useEffect(() => {
     const collectVisitorData = async (): Promise<VisitorData> => {
@@ -125,19 +213,20 @@ const CaptureVisitor = () => {
       const deviceInfo = getDeviceInfo(userAgent);
       const screenInfo = getScreenInfo();
       const networkInfo = await getNetworkInfo();
-      console.log("networkInfo", networkInfo);
-
       const performanceInfo = await getPerformanceMetrics();
       const batteryInfo = await getBatteryInfo();
       const accessibilityInfo = getAccessibilityInfo();
       const sessionInfo = await getSessionInfo();
-      console.log("batteryInfo", batteryInfo, "batteryInfo.batteryLevel");
+      const utmParams = getUTMParameters();
+      const locationData = await getLocationData();
 
       const visitorData: VisitorData = {
         ...deviceInfo,
         ...screenInfo,
         ...networkInfo,
         ...performanceInfo,
+        ...locationData,
+        ...utmParams,
         batteryLevel: batteryInfo.batteryLevel,
         batteryCharging: batteryInfo.charging,
         memoryUsage: (performance as any).memory?.usedJSHeapSize || null,
@@ -148,7 +237,8 @@ const CaptureVisitor = () => {
         ...sessionInfo,
         sessionId: generateSessionId(),
         referrer: document.referrer,
-        language: navigator.language || navigator.languages[0],
+        language:
+          navigator.language || (navigator.languages && navigator.languages[0]),
       };
 
       return visitorData;
@@ -156,9 +246,21 @@ const CaptureVisitor = () => {
 
     const sendVisitorData = async () => {
       try {
+        // Try to retry any failed tracking requests from previous sessions
+        await retryFailedRequests();
+
         const visitorData = await collectVisitorData();
-        await axios.post("/api/userInformation", visitorData);
-        startTracking(visitorData.sessionId);
+        console.log("Sending visitor data:", visitorData);
+        const response = await axios.post("/api/userInformation", visitorData);
+        console.log("Visitor data response:", response.data);
+
+        if (response.data.success && visitorData.sessionId) {
+          startTracking(visitorData.sessionId);
+        } else {
+          console.error(
+            "Failed to start tracking: Invalid response or missing sessionId"
+          );
+        }
       } catch (err) {
         console.error("Failed to send visitor data:", err);
       }

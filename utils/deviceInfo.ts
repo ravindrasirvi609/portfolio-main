@@ -49,28 +49,36 @@ const getDeviceType = (userAgent: string): string => {
 
 // Create a new UAParser instance the correct way
 export const getDeviceInfo = (userAgent: string): DeviceInfo => {
-  // Create a new UAParser instance with the new keyword
-  const parser = new UAParser(userAgent);
+  try {
+    // Create a new UAParser instance with the new keyword
+    const parser = new UAParser(userAgent);
 
-  // Get the parsed results
-  const browser = parser.getBrowser();
-  console.log("Browser -----", browser);
+    // Get the parsed results
+    const browser = parser.getBrowser();
+    const os = parser.getOS();
+    const device = parser.getDevice();
 
-  const os = parser.getOS();
-  console.log("OS -----", os);
-
-  const device = parser.getDevice();
-  console.log("Device -----", device);
-
-  return {
-    userAgent,
-    browser: browser.name || "Unknown",
-    browserVersion: browser.version || "Unknown",
-    operatingSystem: os.name || "Unknown",
-    deviceType: getDeviceType(userAgent),
-    deviceBrand: device.vendor || "Unknown",
-    deviceModel: device.model || "Unknown",
-  };
+    return {
+      userAgent,
+      browser: browser.name || "Unknown",
+      browserVersion: browser.version || "Unknown",
+      operatingSystem: os.name || "Unknown",
+      deviceType: getDeviceType(userAgent),
+      deviceBrand: device.vendor || "Unknown",
+      deviceModel: device.model || "Unknown",
+    };
+  } catch (error) {
+    console.error("Error parsing user agent:", error);
+    return {
+      userAgent,
+      browser: "Unknown",
+      browserVersion: "Unknown",
+      operatingSystem: "Unknown",
+      deviceType: "Unknown",
+      deviceBrand: "Unknown",
+      deviceModel: "Unknown",
+    };
+  }
 };
 
 export const getScreenInfo = (): ScreenInfo => {
@@ -84,17 +92,27 @@ export const getScreenInfo = (): ScreenInfo => {
     };
   }
 
-  return {
-    screenResolution: `${window.screen.width}x${window.screen.height}`,
-    windowSize: `${window.innerWidth}x${window.innerHeight}`,
-    colorDepth: window.screen.colorDepth,
-    pixelRatio: window.devicePixelRatio,
-    touchSupport: "ontouchstart" in window || navigator.maxTouchPoints > 0,
-  };
+  try {
+    return {
+      screenResolution: `${window.screen.width}x${window.screen.height}`,
+      windowSize: `${window.innerWidth}x${window.innerHeight}`,
+      colorDepth: window.screen.colorDepth || 0,
+      pixelRatio: window.devicePixelRatio || 1,
+      touchSupport: "ontouchstart" in window || navigator.maxTouchPoints > 0,
+    };
+  } catch (error) {
+    console.error("Error getting screen info:", error);
+    return {
+      screenResolution: "Unknown",
+      windowSize: "Unknown",
+      colorDepth: 0,
+      pixelRatio: 1,
+      touchSupport: false,
+    };
+  }
 };
 
 export const getNetworkInfo = async (): Promise<NetworkInfo> => {
-  console.log("getNetworkInfo -----", navigator);
   if (typeof navigator === "undefined") {
     return {
       networkType: "Unknown",
@@ -102,25 +120,29 @@ export const getNetworkInfo = async (): Promise<NetworkInfo> => {
     };
   }
 
-  const connection =
-    (navigator as any).connection ||
-    (navigator as any).mozConnection ||
-    (navigator as any).webkitConnection;
+  try {
+    const connection =
+      (navigator as any).connection ||
+      (navigator as any).mozConnection ||
+      (navigator as any).webkitConnection;
 
-  console.log("Connection -----", connection);
-
-  return {
-    networkType: connection?.type || "Unknown",
-    connectionSpeed: connection?.effectiveType || "Unknown",
-    downlink: connection?.downlink,
-    rtt: connection?.rtt,
-    saveData: connection?.saveData,
-  };
+    return {
+      networkType: connection?.type || "Unknown",
+      connectionSpeed: connection?.effectiveType || "Unknown",
+      downlink: connection?.downlink,
+      rtt: connection?.rtt,
+      saveData: connection?.saveData,
+    };
+  } catch (error) {
+    console.error("Error getting network info:", error);
+    return {
+      networkType: "Unknown",
+      connectionSpeed: "Unknown",
+    };
+  }
 };
 
 export const getBatteryInfo = async (): Promise<BatteryInfo> => {
-  console.log("getBatteryInfo -----", navigator);
-
   if (typeof navigator === "undefined" || !("getBattery" in navigator)) {
     return {
       batteryLevel: null,
@@ -132,13 +154,12 @@ export const getBatteryInfo = async (): Promise<BatteryInfo> => {
 
   try {
     const battery = await (navigator as any).getBattery();
-    console.log("Battery -----", battery);
 
     return {
-      batteryLevel: battery.level * 100,
-      charging: battery.charging,
-      chargingTime: battery.chargingTime,
-      dischargingTime: battery.dischargingTime,
+      batteryLevel: battery?.level ? battery.level * 100 : null,
+      charging: battery?.charging || null,
+      chargingTime: battery?.chargingTime || null,
+      dischargingTime: battery?.dischargingTime || null,
     };
   } catch (error) {
     console.error("Battery API error:", error);

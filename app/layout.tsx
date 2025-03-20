@@ -4,7 +4,11 @@ import "./globals.css";
 import { ThemeProvider } from "./provider";
 import { Analytics } from "@vercel/analytics/react";
 import CustomCursor from "@/components/CustomCursor";
-import { getSiteMetadata, getSchemaMarkup } from "@/lib/seo";
+import {
+  getSiteMetadata,
+  getSchemaMarkup,
+  getFAQSchemaMarkup,
+} from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,13 +29,33 @@ export default function RootLayout({
           hrefLang="en-IN"
           href="https://www.ravindrachoudhary.in"
         />
+        <link
+          rel="alternate"
+          hrefLang="hi-IN"
+          href="https://www.ravindrachoudhary.in/hi"
+        />
         <meta name="geo.region" content="IN" />
         <meta name="geo.placename" content="India" />
         <meta property="og:locale" content="en_IN" />
+        <meta property="og:locale:alternate" content="hi_IN" />
+        <meta
+          name="google-site-verification"
+          content="add-your-google-verification-code-here"
+        />
+        <meta
+          name="facebook-domain-verification"
+          content="add-your-facebook-verification-code-here"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(getSchemaMarkup()),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getFAQSchemaMarkup()),
           }}
         />
       </head>

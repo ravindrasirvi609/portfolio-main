@@ -4,54 +4,99 @@ import { socialMedia } from "@/data";
 import MagicButton from "./MagicButton";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Footer = () => {
+  const pathname = usePathname();
+
+  // Check if current path is Hindi version
+  const isHindi = pathname === "/hi";
+
   return (
-    <footer className="w-full pt-20 pb-10" id="contact">
-      {/* background grid */}
-      <div className="w-full absolute left-0 -bottom-72 min-h-96">
-        <Image
-          src="/footer-grid.svg"
-          alt="grid"
-          className="w-full h-full opacity-50 "
-          width={1000}
-          height={1000}
-        />
-      </div>
-
-      <div className="flex flex-col items-center">
-        <h1 className="heading lg:max-w-[45vw]">
-          Ready to take <span className="text-purple">your</span> digital
-          presence to the next level?
-        </h1>
-        <p className="text-white-200 md:mt-10 my-5 text-center">
-          Reach out to me today and let&apos;s discuss how I can help you
-          achieve your goals.
-        </p>
-        <a href="https://wa.me/918107199052">
-          <MagicButton
-            title="Let's get in touch"
-            icon={<FaLocationArrow />}
-            position="right"
-          />
-        </a>
-      </div>
-      <div className="flex mt-16 md:flex-row flex-col justify-between items-center">
-        <p className="md:text-base text-sm md:font-normal font-light">
-          Copyright © 2024 Ravindra Choudhary
-        </p>
-
-        <div className="flex items-center md:gap-3 gap-6">
-          {socialMedia.map((info) => (
-            <div
-              key={info.id}
-              className="w-10 h-10 cursor-pointer flex justify-center items-center backdrop-filter backdrop-blur-lg saturate-180 bg-opacity-75 bg-black-200 rounded-lg border border-black-300"
-            >
-              <Link href={info.url} target="_blank" rel="noreferrer">
-                <Image src={info.img} alt="icons" width={20} height={20} />
+    <footer className="relative z-[100]" id="Contact">
+      <div className="w-full flex flex-col py-10 px-4 md:px-10 gap-10 sm:gap-20">
+        <div className="flex flex-col sm:flex-row justify-between gap-10">
+          <div className="flex flex-col gap-2">
+            <p className="font-bold text-3xl">Ravindra Sirvi</p>
+            <p className="text-gray-400">
+              {isHindi ? "वेबसाइट और ऐप डेवलपर" : "Web & App Developer"}
+            </p>
+            <p className="text-gray-400">{isHindi ? "भारत" : "India"}</p>
+            <div className="flex gap-2 mt-2">
+              <Link
+                href={isHindi ? "/" : "/hi"}
+                className="px-3 py-1 border border-gray-600 rounded-md text-sm hover:bg-gray-800 transition-all"
+              >
+                {isHindi ? "English" : "हिंदी"}
               </Link>
             </div>
-          ))}
+          </div>
+          <div className="flex gap-10 sm:gap-20 flex-wrap">
+            <div className="flex flex-col gap-2">
+              <p className="font-bold">{isHindi ? "सोशल" : "Socials"}</p>
+              <Link
+                href={"https://github.com/ravindrasirvi609"}
+                className="text-gray-400 hover:text-white"
+                target="_blank"
+              >
+                GitHub
+              </Link>
+              <Link
+                href={"https://www.linkedin.com/in/ravindra-sirvi/"}
+                className="text-gray-400 hover:text-white"
+                target="_blank"
+              >
+                LinkedIn
+              </Link>
+              <Link
+                href={"https://twitter.com/ravindra_sirvi"}
+                className="text-gray-400 hover:text-white"
+                target="_blank"
+              >
+                Twitter
+              </Link>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="font-bold">{isHindi ? "संपर्क" : "Contact"}</p>
+              <Link
+                href={"tel:+918107199052"}
+                className="text-gray-400 hover:text-white"
+              >
+                +91 8107199052
+              </Link>
+              <Link
+                href={"mailto:sirviravindra609@gmail.com"}
+                className="text-gray-400 hover:text-white"
+              >
+                sirviravindra609@gmail.com
+              </Link>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="font-bold">{isHindi ? "सेवाएँ" : "Services"}</p>
+              <Link href={"#"} className="text-gray-400 hover:text-white">
+                {isHindi ? "वेबसाइट डेवलपमेंट" : "Website Development"}
+              </Link>
+              <Link href={"#"} className="text-gray-400 hover:text-white">
+                {isHindi ? "मोबाइल ऐप डेवलपमेंट" : "Mobile App Development"}
+              </Link>
+              <Link href={"#"} className="text-gray-400 hover:text-white">
+                {isHindi ? "ई-कॉमर्स वेबसाइट" : "E-commerce Website"}
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-between text-gray-400 text-sm">
+          <p>
+            © 2024 {isHindi ? "सर्वाधिकार सुरक्षित" : "All rights reserved"}
+          </p>
+          <div className="flex gap-4">
+            <Link href={"#"} className="hover:text-white">
+              {isHindi ? "गोपनीयता नीति" : "Privacy Policy"}
+            </Link>
+            <Link href={"#"} className="hover:text-white">
+              {isHindi ? "सेवा की शर्तें" : "Terms of Service"}
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

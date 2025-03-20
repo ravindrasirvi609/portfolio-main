@@ -1,8 +1,44 @@
-# *
+# Allow all search engines to crawl the site
 User-agent: *
 Allow: /
 
-# AdsBot-Google
+# Google specific bots
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Mobile
+Allow: /
+
+# Bing specific bots
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Baidu (popular in China)
+User-agent: Baiduspider
+Allow: /
+
+# Yandex (popular in Russia)
+User-agent: Yandex
+Allow: /
+
+# Facebook bots
+User-agent: facebookexternalhit
+Allow: /
+
+# LinkedIn bot
+User-agent: LinkedInBot
+Allow: /
+
+# Twitter bot
+User-agent: Twitterbot
+Allow: /
+
+# Disallow specific user agents
 User-agent: AdsBot-Google
 Allow: /
 

@@ -5,10 +5,11 @@ module.exports = {
   sitemapSize: 7000,
   changefreq: 'weekly',
   priority: 0.7,
-  exclude: ['/server-sitemap.xml'],
+  exclude: ['/server-sitemap.xml', '/sitemap-cities.xml'],
   robotsTxtOptions: {
     additionalSitemaps: [
       'https://www.ravindrachoudhary.in/server-sitemap.xml',
+      'https://www.ravindrachoudhary.in/sitemap-cities.xml',
     ],
     policies: [
       {
@@ -26,6 +27,10 @@ module.exports = {
     {
       href: 'https://www.ravindrachoudhary.in',
       hreflang: 'en-IN',
+    },
+    {
+      href: 'https://www.ravindrachoudhary.in/hi',
+      hreflang: 'hi-IN',
     },
   ],
 }

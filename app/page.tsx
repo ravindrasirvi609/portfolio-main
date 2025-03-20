@@ -14,6 +14,7 @@ import { FloatingNav } from "@/components/ui/FloatingNavbar";
 import { useEffect, useState } from "react";
 import Github from "@/components/Github";
 import CaptureVisitor from "@/components/userInformation";
+import Head from "next/head";
 
 const Home = () => {
   const [location, setLocation] = useState<{
@@ -98,20 +99,48 @@ const Home = () => {
   }, []); // Empty dependency array means this runs once on mount
 
   return (
-    <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden mx-auto sm:px-10 px-5">
-      <div className="max-w-7xl w-full">
-        <FloatingNav navItems={navItems} />
-        <Hero />
-        <Grid />
-        <Github />
-        <RecentProjects />
-        <Clients />
-        <Experience />
-        <Approach />
-        <Footer />
-        <CaptureVisitor />
-      </div>
-    </main>
+    <>
+      <Head>
+        <meta
+          name="google-site-verification"
+          content="add-your-google-verification-code-here"
+        />
+        <meta
+          name="description"
+          content="Top Indian software engineer specializing in web, mobile, and cloud technologies. Hire me for your next project. Explore my portfolio of successful client work."
+        />
+        <meta
+          name="keywords"
+          content="Ravindra Sirvi, Indian developer, software engineer, web development, mobile development, cloud technologies, portfolio, hire developer India, freelance developer India, best Indian developer"
+        />
+        <meta name="author" content="Ravindra Sirvi" />
+        <meta
+          name="robots"
+          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        />
+        <meta name="geo.region" content="IN" />
+        <meta property="og:locale" content="en_IN" />
+        <link
+          rel="alternate"
+          hrefLang="en-in"
+          href="https://www.ravindrachoudhary.in/"
+        />
+      </Head>
+      <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden mx-auto sm:px-10 px-5">
+        <div className="max-w-7xl w-full">
+          <FloatingNav navItems={navItems} />
+          <Hero />
+          <Grid />
+          <Github />
+          <RecentProjects />
+          <Clients />
+          <Experience />
+          <Approach />
+          <Footer />
+          <CaptureVisitor />
+        </div>
+      </main>
+    </>
   );
 };
 

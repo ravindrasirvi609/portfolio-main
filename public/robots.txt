@@ -2,8 +2,13 @@
 User-agent: *
 Allow: /
 
+# AdsBot-Google
+User-agent: AdsBot-Google
+Allow: /
+
 # Host
 Host: https://www.ravindrachoudhary.in
 
 # Sitemaps
 Sitemap: https://www.ravindrachoudhary.in/sitemap.xml
+Sitemap: https://www.ravindrachoudhary.in/server-sitemap.xml

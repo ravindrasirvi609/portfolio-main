@@ -49,8 +49,8 @@
     "resend": "^3.2.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "three": "^0.159.0",
-    "three-globe": "^2.25.0",
+    "three": "^0.174.0",
+    "three-globe": "^2.29.0",
     "ua-parser-js": "^2.0.2",
     "vercel": "^34.0.0"
   },

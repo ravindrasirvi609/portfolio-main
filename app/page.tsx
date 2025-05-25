@@ -22,11 +22,11 @@ import {
 } from "lucide-react";
 import * as THREE from "three";
 import { socialMedia } from "@/data";
-import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { Projects } from "@/components/sections/Projects";
 import { Experience } from "@/components/sections/Experience";
 import { Testimonials } from "@/components/sections/Testimonials";
+import Hero from "@/components/sections/Hero";
 
 // Scroll to top button
 const ScrollToTop = () => {
@@ -139,103 +139,6 @@ export default function Home() {
             </div>
           </div>
         </nav>
-
-        {/* Hero Section */}
-        {/* <section
-          id="hero"
-          className="relative min-h-screen flex items-center justify-center pt-20"
-        >
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-8 text-center">
-              <div className="relative mb-8">
-                <div className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 p-1">
-                  <div className="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center">
-                    <Code className="w-16 h-16 text-blue-600" />
-                  </div>
-                </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
-                </div>
-              </div>
-
-              <div className="space-y-4 max-w-4xl">
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold">
-                  <span className="block text-slate-900 dark:text-white">
-                    Hi, I&apos;m
-                  </span>
-                  <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
-                    Ravindra Choudhary
-                  </span>
-                </h1>
-                <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                  Full Stack Developer crafting exceptional digital experiences
-                  with
-                  <span className="font-semibold text-blue-600"> Next.js</span>,
-                  <span className="font-semibold text-purple-600"> React</span>,{" "}
-                  <span className="font-semibold text-red-600">Angular</span>{" "}
-                  and
-                  <span className="font-semibold text-green-600">
-                    {" "}
-                    modern technologies
-                  </span>
-                </p>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-4 mt-8">
-                {socialMedia.map((social) => {
-                  const IconComponent = social.icon;
-                  return (
-                    <Button
-                      key={social.id}
-                      variant="outline"
-                      size="lg"
-                      className="rounded-full hover:scale-105 transition-all duration-300 border-2 hover:border-blue-500 hover:text-blue-600"
-                      asChild
-                    >
-                      <a
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <IconComponent className="h-5 w-5 mr-2" />
-                        {social.id === 1
-                          ? "GitHub"
-                          : social.id === 2
-                          ? "Twitter"
-                          : "LinkedIn"}
-                      </a>
-                    </Button>
-                  );
-                })}
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                <Button
-                  size="lg"
-                  className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg"
-                  asChild
-                >
-                  <a
-                    href="https://wa.me/918107199052"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <MessageCircle className="w-5 h-5 mr-2" />
-                    Chat on WhatsApp
-                  </a>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="rounded-full px-8 py-6 text-lg hover:scale-105 transition-all duration-300"
-                >
-                  <ExternalLink className="w-5 h-5 mr-2" />
-                  View Resume
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section> */}
 
         <Hero />
 

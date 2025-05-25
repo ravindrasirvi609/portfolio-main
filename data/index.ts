@@ -126,7 +126,7 @@ export const projects = [
     id: 7,
     title: "Lift - Car Pooling App",
     des: "A real-time car pooling web application built with Next.js 14, integrating Mapbox for live location tracking and real-time chat. Users can offer or request rides, enhancing convenience and sustainability.",
-    img: "/lift.png",
+    img: "/p5.png",
     iconLists: [
       "/next.svg",
       "/tail.svg",
@@ -140,7 +140,7 @@ export const projects = [
     id: 8,
     title: "Comfort Stay PG Management",
     des: "A complete PG management system with multi-role login, an advanced admin dashboard, and integrated AI tools for automation. Designed for both PG owners and tenants to simplify operations and communication.",
-    img: "/comfortstay.png",
+    img: "/comfort.png",
     iconLists: [
       "/next.svg",
       "/tail.svg",

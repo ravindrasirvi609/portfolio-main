@@ -1,3 +1,5 @@
+import { Github, Linkedin, Twitter } from "lucide-react";
+
 export const navItems = [
   { name: "About", link: "#about" },
   { name: "Projects", link: "#projects" },
@@ -120,38 +122,66 @@ export const projects = [
     iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
     link: "https://pharmanecia.org",
   },
+  {
+    id: 7,
+    title: "Lift - Car Pooling App",
+    des: "A real-time car pooling web application built with Next.js 14, integrating Mapbox for live location tracking and real-time chat. Users can offer or request rides, enhancing convenience and sustainability.",
+    img: "/lift.png",
+    iconLists: [
+      "/next.svg",
+      "/tail.svg",
+      "/ts.svg",
+      "/mapbox.svg",
+      "/socket.svg",
+    ],
+    link: "https://lift-coral.vercel.app/",
+  },
+  {
+    id: 8,
+    title: "Comfort Stay PG Management",
+    des: "A complete PG management system with multi-role login, an advanced admin dashboard, and integrated AI tools for automation. Designed for both PG owners and tenants to simplify operations and communication.",
+    img: "/comfortstay.png",
+    iconLists: [
+      "/next.svg",
+      "/tail.svg",
+      "/ts.svg",
+      "/ai.svg",
+      "/dashboard.svg",
+    ],
+    link: "https://comfortstaypg.com/",
+  },
 ];
 
 export const testimonials = [
   {
     quote:
-      "Collaborating with Ravindra was an absolute pleasure. His professionalism, promptness, and dedication to delivering exceptional results were evident throughout our project. Ravindra's enthusiasm for every facet of development truly stands out. If you're seeking to elevate your website and elevate your brand, Ravindra is the ideal partner.",
-    name: "Michael Johnson",
-    title: "Director of AlphaStream Technologies",
+      "Working with Ravindra was a game-changer for our conference registration system. His understanding of scalable web solutions and eye for detail made the process seamless. Highly recommend him for any tech-driven initiative.",
+    name: "Dr. Anjali Mehta",
+    title: "Professor, Bombay College of Pharmacy",
   },
   {
     quote:
-      "Collaborating with Ravindra was an absolute pleasure. His professionalism, promptness, and dedication to delivering exceptional results were evident throughout our project. Ravindra's enthusiasm for every facet of development truly stands out. If you're seeking to elevate your website and elevate your brand, Ravindra is the ideal partner.",
-    name: "Michael Johnson",
-    title: "Director of AlphaStream Technologies",
+      "Ravindra brought a lot of innovative ideas to our PG management platform. From user flow to admin dashboards, he handled everything with clarity and confidence. Truly professional!",
+    name: "Dilip Sirvi",
+    title: "Founder, ComfortStay PG Services",
   },
   {
     quote:
-      "Collaborating with Ravindra was an absolute pleasure. His professionalism, promptness, and dedication to delivering exceptional results were evident throughout our project. Ravindra's enthusiasm for every facet of development truly stands out. If you're seeking to elevate your website and elevate your brand, Ravindra is the ideal partner.",
-    name: "Michael Johnson",
-    title: "Director of AlphaStream Technologies",
+      "Our collaboration with Ravindra for the Lift carpooling platform was fantastic. His expertise in real-time systems and Mapbox integration delivered exactly what we envisioned.",
+    name: "Suresh Nair",
+    title: "Product Manager, Lift Mobility",
   },
   {
     quote:
-      "Collaborating with Ravindra was an absolute pleasure. His professionalism, promptness, and dedication to delivering exceptional results were evident throughout our project. Ravindra's enthusiasm for every facet of development truly stands out. If you're seeking to elevate your website and elevate your brand, Ravindra is the ideal partner.",
-    name: "Michael Johnson",
-    title: "Director of AlphaStream Technologies",
+      "Ravindra is one of the most dedicated developers I've worked with. His ability to take ownership and deliver under tight deadlines was impressive. His work speaks volumes.",
+    name: "Neha Kapoor",
+    title: "Operations Head, NextGen Leaders",
   },
   {
     quote:
-      "Collaborating with Ravindra was an absolute pleasure. His professionalism, promptness, and dedication to delivering exceptional results were evident throughout our project. Ravindra's enthusiasm for every facet of development truly stands out. If you're seeking to elevate your website and elevate your brand, Ravindra is the ideal partner.",
-    name: "Michael Johnson",
-    title: "Director of AlphaStream Technologies",
+      "Ravindra understood our requirements for the conference site better than we did ourselves. His technical proficiency and creative input made the website a huge success.",
+    name: "Dr. Mihir kar",
+    title: "Convener, APTICON 2024",
   },
 ];
 
@@ -197,48 +227,44 @@ export const companies = [
 export const workExperience = [
   {
     id: 1,
-    title: "Solution Developer - Intern",
-    desc: "Assisted in the development of a web-based platform using Angular, Asp.Net Core, and SQL Server enhancing interactivity.",
-    className: "md:col-span-2",
-    thumbnail: "/exp1.svg",
+    title: "Angular Developer",
+    desc: "Developed a high-performance PWA with push notifications and complex dynamic forms. Built a reusable frontend framework to accelerate development.",
+    thumbnail: "/api/placeholder/400/200",
+    company: "Viklele Consulting",
+    duration: "Dec 2024 - Present",
   },
   {
     id: 2,
-    title: "Solution Developer",
-    desc: "Designed and developed Business Risk Web Application using Angular, Asp.Net Core, and SQL Server.",
-    className: "md:col-span-2", // change to md:col-span-2
-    thumbnail: "/exp2.svg",
+    title: "Software Engineer",
+    desc: "Built a pharma research platform in Next.js with secure authentication, payment integration, and advanced user profile features. Managed full project lifecycle.",
+    thumbnail: "/api/placeholder/400/200",
+    company: "Operant Federation",
+    duration: "Jun 2023 - Nov 2024",
   },
   {
     id: 3,
-    title: "Full stack Developer",
-    desc: "Developed the Social media Web Application for a France client, from initial concept to deployment",
-    className: "md:col-span-2", // change to md:col-span-2
-    thumbnail: "/exp3.svg",
-  },
-  {
-    id: 4,
-    title: "Software Engineer",
-    desc: "Designed, Developed and maintained Web applications using Next Js technologies.",
-    className: "md:col-span-2",
-    thumbnail: "/exp4.svg",
+    title: "Solution Developer",
+    desc: "Developed a risk management system using ASP.NET Core and Angular. Designed REST APIs and improved data workflows through dynamic forms.",
+    thumbnail: "/api/placeholder/400/200",
+    company: "Quadwave Consulting",
+    duration: "Apr 2022 - May 2023",
   },
 ];
 
+export const skills = [
+  { name: "Angular", level: 95 },
+  { name: "Next.js / React", level: 90 },
+  { name: "TypeScript / JavaScript", level: 90 },
+  { name: ".NET Core", level: 85 },
+  { name: "GraphQL", level: 80 },
+  { name: "REST API Design", level: 88 },
+  { name: "PWA & Push Notifications", level: 85 },
+  { name: "MySQL", level: 80 },
+  { name: "Agile / Git / CI-CD", level: 82 },
+];
+
 export const socialMedia = [
-  {
-    id: 1,
-    img: "/git.svg",
-    url: "https://github.com/ravindrasirvi609",
-  },
-  {
-    id: 2,
-    img: "/twit.svg",
-    url: "https://x.com/ravindra_sirvi",
-  },
-  {
-    id: 3,
-    img: "/link.svg",
-    url: "https://www.linkedin.com/in/ravindra-sirvi/",
-  },
+  { id: 1, url: "https://github.com/ravindrasirvi609", icon: Github },
+  { id: 2, url: "https://x.com/ravindra_sirvi", icon: Twitter },
+  { id: 3, url: "https://www.linkedin.com/in/ravindra-sirvi/", icon: Linkedin },
 ];

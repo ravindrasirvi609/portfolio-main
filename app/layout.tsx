@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./provider";
 import { Analytics } from "@vercel/analytics/react";
-import CustomCursor from "@/components/CustomCursor";
 import {
   getSiteMetadata,
   getSchemaMarkup,
@@ -69,7 +68,6 @@ export default function RootLayout({
           {children}
           <Analytics />
         </ThemeProvider>
-        <CustomCursor />
         <script
           async
           src="https://api.cronbot.ai/v1/widgets/app/app_afufv512myio"

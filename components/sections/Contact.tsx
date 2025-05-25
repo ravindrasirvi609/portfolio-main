@@ -36,7 +36,7 @@ export const Contact = () => {
                     Email
                   </h3>
                   <p className="text-slate-600 dark:text-slate-300">
-                    ravindra@example.com
+                    dev@ravindrachoudhary.in
                   </p>
                 </div>
               </div>

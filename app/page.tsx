@@ -645,7 +645,7 @@ export default function Home() {
                         Email
                       </h3>
                       <p className="text-slate-600 dark:text-slate-300">
-                        ravindra@example.com
+                        dev@ravindrachoudhary.in
                       </p>
                     </div>
                   </div>
@@ -659,7 +659,7 @@ export default function Home() {
                         Phone
                       </h3>
                       <p className="text-slate-600 dark:text-slate-300">
-                        +1 (555) 123-4567
+                        +91 8107199052
                       </p>
                     </div>
                   </div>
@@ -673,7 +673,7 @@ export default function Home() {
                         Location
                       </h3>
                       <p className="text-slate-600 dark:text-slate-300">
-                        San Francisco, CA
+                        Pune, Maharashtra, India
                       </p>
                     </div>
                   </div>

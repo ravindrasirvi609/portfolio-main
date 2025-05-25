@@ -2,31 +2,14 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Github,
-  Linkedin,
-  Twitter,
-  ExternalLink,
-  Mail,
-  Phone,
-  MapPin,
-  Code,
-  Palette,
-  Zap,
-  Users,
-  Award,
-  Calendar,
-  ArrowUp,
-  MessageCircle,
-  Contact,
-} from "lucide-react";
-import * as THREE from "three";
+import { ArrowUp } from "lucide-react";
 import { socialMedia } from "@/data";
 import { About } from "@/components/sections/About";
 import { Projects } from "@/components/sections/Projects";
 import { Experience } from "@/components/sections/Experience";
 import { Testimonials } from "@/components/sections/Testimonials";
 import Hero from "@/components/sections/Hero";
+import Contact from "@/components/sections/Contact";
 
 // Scroll to top button
 const ScrollToTop = () => {

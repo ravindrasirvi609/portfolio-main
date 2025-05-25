@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import * as THREE from "three";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; // Assuming this component handles its own B&W theming or is neutral
 import {
   Mail,
   ExternalLink,
@@ -10,6 +10,7 @@ import {
   Code,
   Download,
   ChevronDown,
+  MessageCircle,
 } from "lucide-react";
 
 const ThreeJSHero = () => {
@@ -41,11 +42,11 @@ const ThreeJSHero = () => {
       positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
 
-      const color = new THREE.Color();
-      color.setHSL(Math.random() * 0.3 + 0.5, 0.7, 0.5);
-      colors[i * 3] = color.r;
-      colors[i * 3 + 1] = color.g;
-      colors[i * 3 + 2] = color.b;
+      // Grayscale particles: R, G, and B values are the same
+      const grayScaleValue = Math.random() * 0.6 + 0.4; // Range from 0.4 (dark gray) to 1.0 (white)
+      colors[i * 3] = grayScaleValue;
+      colors[i * 3 + 1] = grayScaleValue;
+      colors[i * 3 + 2] = grayScaleValue;
 
       sizes[i] = Math.random() * 2 + 1;
     }
@@ -69,7 +70,7 @@ const ThreeJSHero = () => {
         uniform float time;
         
         void main() {
-          vColor = particleColor;
+          vColor = particleColor; // Will be grayscale
           vec3 pos = position;
           pos.x += sin(time + position.y * 0.1) * 0.1;
           pos.y += cos(time + position.x * 0.1) * 0.1;
@@ -80,14 +81,14 @@ const ThreeJSHero = () => {
         }
       `,
       fragmentShader: `
-        varying vec3 vColor;
+        varying vec3 vColor; // vColor is already grayscale
         
         void main() {
           float distance = length(gl_PointCoord - vec2(0.5));
           if (distance > 0.5) discard;
           
           float alpha = 1.0 - (distance * 2.0);
-          gl_FragColor = vec4(vColor, alpha * 0.8);
+          gl_FragColor = vec4(vColor, alpha * 0.8); // vColor is (gray, gray, gray)
         }
       `,
       transparent: true,
@@ -104,7 +105,7 @@ const ThreeJSHero = () => {
     // Torus
     const torusGeometry = new THREE.TorusGeometry(0.5, 0.2, 8, 16);
     const torusMaterial = new THREE.MeshPhongMaterial({
-      color: 0x4f46e5,
+      color: 0x888888, // Mid-gray
       transparent: true,
       opacity: 0.8,
       wireframe: true,
@@ -116,7 +117,7 @@ const ThreeJSHero = () => {
     // Octahedron
     const octaGeometry = new THREE.OctahedronGeometry(0.8);
     const octaMaterial = new THREE.MeshPhongMaterial({
-      color: 0x7c3aed,
+      color: 0xcccccc, // Light-gray
       transparent: true,
       opacity: 0.7,
     });
@@ -127,7 +128,7 @@ const ThreeJSHero = () => {
     // Icosahedron
     const icoGeometry = new THREE.IcosahedronGeometry(0.6);
     const icoMaterial = new THREE.MeshPhongMaterial({
-      color: 0x06b6d4,
+      color: 0x555555, // Dark-gray
       transparent: true,
       opacity: 0.6,
     });
@@ -138,7 +139,7 @@ const ThreeJSHero = () => {
     // Dodecahedron
     const dodecaGeometry = new THREE.DodecahedronGeometry(0.7);
     const dodecaMaterial = new THREE.MeshPhongMaterial({
-      color: 0x10b981,
+      color: 0xeeeeee, // Very light-gray (almost white)
       transparent: true,
       opacity: 0.5,
       wireframe: true,
@@ -155,7 +156,7 @@ const ThreeJSHero = () => {
 
     // Scene setup
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x000000, 1, 15);
+    scene.fog = new THREE.Fog(0x000000, 1, 15); // Black fog
     sceneRef.current = scene;
 
     // Camera
@@ -183,19 +184,20 @@ const ThreeJSHero = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+    const ambientLight = new THREE.AmbientLight(0x505050, 0.8); // Dark gray ambient light, slightly brighter
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2); // White directional light, slightly stronger
     directionalLight.position.set(5, 5, 5);
     directionalLight.castShadow = true;
     scene.add(directionalLight);
 
-    const pointLight1 = new THREE.PointLight(0x4f46e5, 1, 10);
+    // Point lights changed to white for neutral illumination
+    const pointLight1 = new THREE.PointLight(0xffffff, 0.7, 10);
     pointLight1.position.set(-5, 5, 2);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0x7c3aed, 1, 10);
+    const pointLight2 = new THREE.PointLight(0xffffff, 0.7, 10);
     pointLight2.position.set(5, -5, 2);
     scene.add(pointLight2);
 
@@ -274,7 +276,7 @@ const ThreeJSHero = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-blue-400 to-slate-900">
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-black via-gray-800 to-black">
       {/* Three.js Canvas */}
       <div
         ref={mountRef}
@@ -291,13 +293,13 @@ const ThreeJSHero = () => {
         <div className="container px-4 md:px-6 text-center">
           {/* Profile Avatar with 3D effect */}
           <div className="relative mb-8 mx-auto w-fit">
-            <div className="w-40 h-40 rounded-full bg-gradient-to-r from-blue-500 via-orange-600 to-pink-500 p-1 shadow-2xl transform hover:scale-105 transition-all duration-500">
-              <div className="w-full h-full rounded-full bg-slate-900/90 backdrop-blur-sm flex items-center justify-center relative overflow-hidden">
-                <Code className="w-20 h-20 text-blue-400 z-10 animate-pulse" />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 animate-pulse" />
+            <div className="w-40 h-40 rounded-full bg-gradient-to-r from-orange-500 via-orange-500 to-white p-1 shadow-2xl transform hover:scale-105 transition-all duration-500">
+              <div className="w-full h-full rounded-full bg-black/90 backdrop-blur-sm flex items-center justify-center relative overflow-hidden">
+                <Code className="w-20 h-20 text-white z-10 animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-600/20 to-gray-400/20 animate-pulse" />
               </div>
             </div>
-            <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+            <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-r from-gray-300 to-gray-500 rounded-full flex items-center justify-center shadow-lg">
               <div className="w-4 h-4 bg-white rounded-full animate-ping" />
             </div>
           </div>
@@ -309,18 +311,24 @@ const ThreeJSHero = () => {
                 <span className="block text-white/90 mb-2 transform hover:scale-105 transition-transform duration-300">
                   Hi, I&apos;m
                 </span>
-                <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+                <span className="block bg-gradient-to-r from-orange-500 via-whi to-orange-500 bg-clip-text text-transparent animate-pulse">
                   Ravindra Choudhary
                 </span>
               </h1>
 
-              <p className="text-xl md:text-2xl lg:text-3xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl lg:text-3xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
                 Full Stack Developer crafting
-                <span className="font-bold text-blue-400"> exceptional </span>
+                <span className="font-bold text-white"> exceptional </span>
                 digital experiences with
-                <span className="font-bold text-purple-400"> Next.js</span>,
-                <span className="font-bold text-pink-400"> React</span>, and
-                <span className="font-bold text-emerald-400">
+                <span className="font-bold text-blue-500"> Next.js</span>,
+                <span className="font-bold text-green-500"> React</span>
+                <span className="font-bold text-red-500"> Angular </span>
+                <span className="font-bold text-purple-500">
+                  {" "}
+                  TypeScript
+                </span>{" "}
+                and
+                <span className="font-bold text-white">
                   {" "}
                   modern technologies
                 </span>
@@ -336,7 +344,7 @@ const ThreeJSHero = () => {
                     key={social.id}
                     variant="outline"
                     size="lg"
-                    className="rounded-full bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 hover:scale-110 hover:border-blue-400/50 transition-all duration-300 shadow-lg hover:shadow-blue-500/25"
+                    className="rounded-full bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 hover:scale-110 hover:border-white/50 transition-all duration-300 shadow-lg hover:shadow-gray-500/25"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <IconComponent className="h-5 w-5 mr-2" />
@@ -350,10 +358,13 @@ const ThreeJSHero = () => {
             <div className="flex flex-col sm:flex-row justify-center gap-6 mt-12">
               <Button
                 size="lg"
-                className="rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white px-10 py-6 text-lg font-semibold shadow-2xl hover:shadow-purple-500/50 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+                className="rounded-full bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300 hover:from-gray-200 hover:via-gray-300 hover:to-gray-400 text-black px-10 py-6 text-lg font-semibold shadow-2xl hover:shadow-gray-700/50 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+                onClick={() =>
+                  window.open(`https://wa.me/918107199052`, "_blank")
+                }
               >
-                <Mail className="w-6 h-6 mr-3" />
-                Get In Touch
+                <MessageCircle className="w-6 h-6 mr-3" />
+                Chat on WhatsApp
               </Button>
 
               <Button
@@ -368,7 +379,7 @@ const ThreeJSHero = () => {
           </div>
 
           {/* Scroll Indicator */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="fixed bottom-8 left-0 right-0 flex justify-center items-center animate-bounce">
             <div className="flex flex-col items-center text-white/60">
               <span className="text-sm mb-2 font-medium">
                 Scroll to explore
@@ -383,7 +394,7 @@ const ThreeJSHero = () => {
       <div className="absolute top-8 left-8 z-20 mt-14">
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-xl">
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-white/80 text-sm font-medium">
               Available for work
             </span>
@@ -402,9 +413,9 @@ const ThreeJSHero = () => {
 
       {/* Loading Overlay */}
       {!isLoaded && (
-        <div className="absolute inset-0 z-50 bg-slate-900 flex items-center justify-center">
+        <div className="absolute inset-0 z-50 bg-black flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-white/80 text-lg font-medium">
               Loading Experience...
             </p>

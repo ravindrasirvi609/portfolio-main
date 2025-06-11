@@ -377,16 +377,6 @@ const ThreeJSHero = () => {
               </Button>
             </div>
           </div>
-
-          {/* Scroll Indicator */}
-          <div className="fixed bottom-8 left-0 right-0 flex justify-center items-center animate-bounce">
-            <div className="flex flex-col items-center text-white/60">
-              <span className="text-sm mb-2 font-medium">
-                Scroll to explore
-              </span>
-              <ChevronDown className="w-6 h-6 animate-pulse" />
-            </div>
-          </div>
         </div>
       </div>
 

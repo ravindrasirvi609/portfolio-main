@@ -8,6 +8,7 @@ import { About } from "@/components/sections/About";
 import { Projects } from "@/components/sections/Projects";
 import { Experience } from "@/components/sections/Experience";
 import { Testimonials } from "@/components/sections/Testimonials";
+import { GitHubContributions } from "@/components/sections/GitHubContributions";
 import Hero from "@/components/sections/Hero";
 import Contact from "@/components/sections/Contact";
 
@@ -70,6 +71,7 @@ export default function Home() {
         "about",
         "projects",
         "experience",
+        "github",
         "testimonials",
         "contact",
       ];
@@ -105,19 +107,21 @@ export default function Home() {
                 RC
               </div>
               <div className="hidden md:flex space-x-8">
-                {["About", "Projects", "Experience", "Contact"].map((item) => (
-                  <a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    className={`text-sm font-medium transition-colors hover:text-blue-600 ${
-                      currentSection === item.toLowerCase()
-                        ? "text-blue-600"
-                        : "text-slate-600 dark:text-slate-300"
-                    }`}
-                  >
-                    {item}
-                  </a>
-                ))}
+                {["About", "Projects", "Experience", "GitHub", "Contact"].map(
+                  (item) => (
+                    <a
+                      key={item}
+                      href={`#${item.toLowerCase()}`}
+                      className={`text-sm font-medium transition-colors hover:text-blue-600 ${
+                        currentSection === item.toLowerCase()
+                          ? "text-blue-600"
+                          : "text-slate-600 dark:text-slate-300"
+                      }`}
+                    >
+                      {item}
+                    </a>
+                  )
+                )}
               </div>
             </div>
           </div>
@@ -133,6 +137,11 @@ export default function Home() {
 
         {/* Experience Section */}
         <Experience />
+
+        {/* GitHub Contributions Section */}
+        <div id="github">
+          <GitHubContributions />
+        </div>
 
         {/* Testimonials Section */}
         <Testimonials />

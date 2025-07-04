@@ -1,0 +1,18 @@
+[
+  {
+    "from": "India",
+    "to": "USA"
+  },
+  {
+    "from": "USA",
+    "to": "Japan"
+  },
+  {
+    "from": "Japan",
+    "to": "China"
+  },
+  {
+    "from": "China",
+    "to": "Germany"
+  }
+]

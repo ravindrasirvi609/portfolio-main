@@ -1,185 +1,235 @@
+// Hero.tsx – drop-in replacement
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import * as THREE from "three";
-import { Button } from "@/components/ui/button";
-import { Download, MessageCircle } from "lucide-react";
 
+import React, { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import ThreeGlobe from "three-globe";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Loader } from "lucide-react";
+
+/* ---------- Icon helpers ---------- */
+const Github = () => (
+  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.299 24 12c0-6.627-5.373-12-12-12z" />
+  </svg>
+);
+const Linkedin = () => (
+  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+  </svg>
+);
+const Twitter = () => (
+  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+  </svg>
+);
+const Mail = () => (
+  <svg
+    className="w-5 h-5"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+    />
+  </svg>
+);
+
+/* ---------- 3-D Globe + Scroll ---------- */
 export default function Hero() {
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { scrollYProgress } = useScroll();
+  const cameraZ = useTransform(scrollYProgress, [0, 0.5, 1], [300, 100, 800]);
 
   useEffect(() => {
-    let globe: any;
-    let controls: any;
-    let renderer: any;
-    let camera: any;
-    let scene: any;
-    let animationId: number;
+    if (!canvasRef.current) return;
 
-    async function init() {
-      // Dynamically import browser-only modules
-      const [ThreeGlobeModule, OrbitControlsModule, countriesData] =
-        await Promise.all([
-          import("three-globe"),
-          import("three/examples/jsm/controls/OrbitControls"),
-          import("@/data/globe.json"),
-        ]);
-      const ThreeGlobe = ThreeGlobeModule.default;
-      const OrbitControls = OrbitControlsModule.OrbitControls;
-      const countries = countriesData.default || countriesData;
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000510);
 
-      const { current: canvas } = canvasRef;
-      if (!canvas) return;
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      2000
+    );
+    camera.position.set(0, 0, 300);
 
-      scene = new THREE.Scene();
-      // Add a starfield background
-      const starGeometry = new THREE.BufferGeometry();
-      const starMaterial = new THREE.PointsMaterial({ color: 0xffffff });
-      const starVertices = [];
-      for (let i = 0; i < 10000; i++) {
-        const x = (Math.random() - 0.5) * 2000;
-        const y = (Math.random() - 0.5) * 2000;
-        const z = -Math.random() * 2000;
-        starVertices.push(x, y, z);
-      }
-      starGeometry.setAttribute(
-        "position",
-        new THREE.Float32BufferAttribute(starVertices, 3)
-      );
-      const stars = new THREE.Points(starGeometry, starMaterial);
-      scene.add(stars);
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvasRef.current,
+      antialias: true,
+      alpha: true,
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      scene.fog = new THREE.Fog(0x000000, 400, 2000);
-      scene.background = new THREE.Color(0x0a0a23); // deep blue-black
-      scene.add(new THREE.AmbientLight(0xffffff, 1.2)); // brighter ambient
-      scene.add(new THREE.DirectionalLight(0xffffff, 1)); // brighter directional
+    /* Lighting */
+    scene.add(new THREE.AmbientLight(0xcccccc, 0.8));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.8);
+    sun.position.set(1, 1, 1);
+    scene.add(sun);
 
-      camera = new THREE.PerspectiveCamera(
-        50,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      );
-      camera.position.set(0, 0, 400);
-      camera.lookAt(0, 0, 0);
+    /* Starfield */
+    const starVertices = new Float32Array(15_000 * 3).map(() =>
+      THREE.MathUtils.randFloatSpread(2000)
+    );
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(starVertices, 3)
+    );
+    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8 });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
 
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-      renderer.setClearColor(0x0a0a23, 1);
+    /* Globe */
+    const globe = new ThreeGlobe()
+      .globeImageUrl(
+        "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+      )
+      // .bumpImageUrl(
+      //   "https://unpkg.com/three-globe/example/img/earth-topology.png"
+      // )
+      // .nightImageUrl(
+      //   "https://unpkg.com/three-globe/example/img/earth-night.jpg"
+      // )
+      .atmosphereColor("#3a92ff")
+      .atmosphereAltitude(0.25);
+
+    globe.rotateY(-Math.PI * 0.5);
+    scene.add(globe);
+
+    /* Controls */
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 100;
+    controls.maxDistance = 900;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.4;
+    controls.enablePan = false;
+    controls.enableZoom = false; // scroll handled manually
+
+    /* Resize handler */
+    const onResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-
-      globe = new ThreeGlobe();
-      // Add a realistic Earth texture (make sure this file exists in /public)
-      if (typeof globe.globeImageUrl === "function") {
-        globe.globeImageUrl("/earth-blue-marble.jpg");
-      }
-      // Add a glowing atmosphere
-      globe
-        .atmosphereColor("#3a9cff")
-        .atmosphereAltitude(0.25)
-        .hexPolygonsData(countries.features)
-        .hexPolygonResolution(3)
-        .hexPolygonMargin(0.7)
-        .hexPolygonColor((e: any) => {
-          if (
-            ["USA", "India", "Japan", "China", "Germany"].includes(
-              e.properties.ISO_A3
-            )
-          ) {
-            return "rgba(255,255,255,1)"; // white highlight
-          } else return "rgba(255,255,255,0.7)"; // semi-white
-        });
-
-      const globeMesh = globe.clone();
-      globeMesh.rotation.y = -Math.PI * (5 / 9);
-      globeMesh.rotation.z = Math.PI / 9;
-      scene.add(globeMesh);
-
-      controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.enablePan = false;
-      controls.minDistance = 200;
-      controls.maxDistance = 500;
-      controls.rotateSpeed = 0.8;
-      controls.zoomSpeed = 1;
-      controls.autoRotate = false;
-      controls.minPolarAngle = Math.PI / 3.5;
-      controls.maxPolarAngle = Math.PI - Math.PI / 3;
-
-      window.addEventListener("resize", handleResize);
-
-      function handleResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
-
-      function animate() {
-        camera.lookAt(scene.position);
-        controls.update();
-        renderer.render(scene, camera);
-        animationId = requestAnimationFrame(animate);
-      }
-      animate();
-    }
-
-    if (typeof window !== "undefined") {
-      init();
-    }
-
-    return () => {
-      if (animationId) cancelAnimationFrame(animationId);
-      if (globe && globe.traverse) {
-        globe.traverse((child: any) => {
-          if (child.geometry) {
-            child.geometry.dispose();
-          }
-          if (child.material) {
-            if (Array.isArray(child.material)) {
-              child.material.forEach((m: any) => m.dispose());
-            } else {
-              child.material.dispose();
-            }
-          }
-        });
-      }
-      if (renderer) {
-        renderer.dispose();
-      }
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", () => {});
-      }
     };
-  }, []);
+    window.addEventListener("resize", onResize);
+
+    /* Animation loop */
+    const animate = () => {
+      camera.position.z = cameraZ.get();
+      controls.update();
+      stars.rotation.y += 0.0001;
+      renderer.render(scene, camera);
+    };
+    renderer.setAnimationLoop(animate);
+    setIsLoading(false);
+
+    /* Cleanup */
+    return () => {
+      renderer.setAnimationLoop(null);
+      window.removeEventListener("resize", onResize);
+      renderer.dispose();
+      scene.traverse((obj) => {
+        if ((obj as any).geometry) (obj as any).geometry.dispose?.();
+        const mat = obj as any;
+        if (mat.material) {
+          if (Array.isArray(mat.material))
+            mat.material.forEach((m: any) => m.dispose?.());
+          else mat.material.dispose?.();
+        }
+      });
+    };
+  }, [cameraZ]);
 
   return (
-    <div className="relative flex flex-col h-screen items-center justify-center">
-      <canvas ref={canvasRef} className="absolute top-0 left-0" />
-      <div className="relative z-10 flex flex-col items-center text-center px-4">
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white">
-          Ravindra Choudhary
-        </h1>
-        <p className="mt-4 text-lg md:text-xl lg:text-2xl text-gray-300">
-          Full Stack Developer | UI/UX Enthusiast
-        </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-6 mt-8">
-          <Button
-            size="lg"
-            className="rounded-full bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300 hover:from-gray-200 hover:via-gray-300 hover:to-gray-400 text-black px-10 py-6 text-lg font-semibold shadow-2xl hover:shadow-gray-700/50 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300"
-            onClick={() => window.open(`https://wa.me/918107199052`, "_blank")}
-          >
-            <MessageCircle className="w-6 h-6 mr-3" />
-            Chat on WhatsApp
-          </Button>
-
-          <Button
-            size="lg"
-            variant="outline"
-            className="rounded-full bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20 px-10 py-6 text-lg font-semibold hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg"
-          >
-            <Download className="w-6 h-6 mr-3" />
-            Download Resume
-          </Button>
+    <>
+      {/* Loading overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+          <div className="flex flex-col items-center gap-3">
+            <Loader className="w-10 h-10 animate-spin text-cyan-400" />
+            <p className="text-cyan-300 text-lg">Loading Earth…</p>
+          </div>
         </div>
+      )}
+
+      {/* 3-D canvas */}
+      <canvas ref={canvasRef} className="fixed inset-0 z-0" />
+
+      {/* Scrollable content */}
+      <div className="relative z-10 w-full h-[300vh] pointer-events-none">
+        <section className="h-screen flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="pointer-events-auto text-center"
+          >
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter bg-gradient-to-r from-cyan-300 via-indigo-400 to-purple-500 bg-clip-text text-transparent">
+              Ravindra Choudhary
+            </h1>
+            <p className="mt-3 text-xl md:text-2xl text-gray-200 font-light">
+              Full-Stack Engineer • UI / UX Enthusiast
+            </p>
+            <p className="mt-1 text-gray-400">Scroll to explore ↓</p>
+          </motion.div>
+        </section>
+
+        {/* Résumé sections */}
+        {[
+          {
+            title: "Experience",
+            items: [
+              "Viklele Consulting – Software Engineer (Dec 2024 → Present)\nCVS Health USA real-time staff tracking & advanced routing.",
+              "Operant Pharmacy – Software Engineer (Jun 2023 → Nov 2024)\nNext.js pharmacy research platform, Razorpay payments, scalable DB design.",
+              "Quadwave Consulting – Solution Developer (Apr 2022 → May 2023)\nASP.NET Core & Angular risk-management tool, REST APIs.",
+            ],
+          },
+          {
+            title: "Projects",
+            items: [
+              "Business Risk Management Tool – ASP.NET Core + Angular",
+              "Social-Media Web App – Angular, Auth, Payments",
+              "Pharmacy Research Platform – Next.js, Data-Viz",
+              "Lift – Real-time Car-Pooling, Mapbox, Chat",
+            ],
+          },
+        ].map((section, idx) => (
+          <section
+            key={idx}
+            className="h-screen flex items-center justify-center px-6"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="pointer-events-auto max-w-3xl text-center"
+            >
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-cyan-300 to-purple-500 bg-clip-text text-transparent">
+                {section.title}
+              </h2>
+              <div className="space-y-4 text-gray-200 text-lg md:text-xl">
+                {section.items.map((t, i) => (
+                  <p key={i} className="leading-relaxed">
+                    {t}
+                  </p>
+                ))}
+              </div>
+            </motion.div>
+          </section>
+        ))}
       </div>
-    </div>
+    </>
   );
 }

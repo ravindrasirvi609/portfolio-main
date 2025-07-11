@@ -21,12 +21,6 @@ export async function GET(request: Request) {
       priority: 0.8,
     },
     {
-      loc: `${baseUrl}/visitor-dashboard`,
-      lastmod: new Date().toISOString(),
-      changefreq: "weekly",
-      priority: 0.7,
-    },
-    {
       loc: `${baseUrl}/site-visitor`,
       lastmod: new Date().toISOString(),
       changefreq: "weekly",

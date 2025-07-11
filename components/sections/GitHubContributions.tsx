@@ -211,7 +211,7 @@ export const GitHubContributions = () => {
   }
 
   return (
-    <section className="py-20 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm relative overflow-hidden">
+    <section className="py-20relative overflow-hidden">
       {/* 3D Background */}
       <div ref={containerRef} className="absolute inset-0 z-0" />
 

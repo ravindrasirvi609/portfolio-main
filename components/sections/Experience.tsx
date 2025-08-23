@@ -155,8 +155,8 @@ export const Experience = () => {
           className="text-center mt-16"
         >
           <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-            I'm always open to new opportunities and exciting projects. Let's
-            discuss how we can work together!
+            I&apos;m always open to new opportunities and exciting projects.
+            Let&apos;s discuss how we can work together!
           </p>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -169,7 +169,7 @@ export const Experience = () => {
               }
             }}
           >
-            Let's Connect
+            Let&apos;s Connect
             <ArrowRight className="w-5 h-5" />
           </motion.button>
         </motion.div>

@@ -12,5 +12,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json("Visitor added successfully");
   } catch (error: any) {
     console.error(error);
+    return NextResponse.json(
+      { error: "Failed to add visitor" },
+      { status: 500 }
+    );
   }
 }

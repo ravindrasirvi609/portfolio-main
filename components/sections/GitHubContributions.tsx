@@ -100,6 +100,10 @@ export const GitHubContributions = () => {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Store ref values to avoid cleanup issues
+    const container = containerRef.current;
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
     // Scene setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
@@ -115,10 +119,9 @@ export const GitHubContributions = () => {
     cameraRef.current = camera;
 
     // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    containerRef.current.appendChild(renderer.domElement);
+    container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
     // Add ambient light
@@ -150,8 +153,8 @@ export const GitHubContributions = () => {
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      if (containerRef.current && rendererRef.current) {
-        containerRef.current.removeChild(rendererRef.current.domElement);
+      if (container && rendererRef.current) {
+        container.removeChild(rendererRef.current.domElement);
       }
     };
   }, []);

@@ -1,5 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { About } from "@/components/sections/About";
 import { Projects } from "@/components/sections/Projects";
 import { Experience } from "@/components/sections/Experience";
@@ -13,16 +15,20 @@ const Hero = dynamic(() => import("@/components/sections/Hero"), {
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background relative overflow-x-hidden">
-      <Hero />
-      <About />
-      <Projects />
-      <Experience />
-      <div id="github">
-        <GitHubContributions />
-      </div>
-      <Testimonials />
-      <Contact />
-    </main>
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-background relative overflow-x-hidden">
+        <Hero />
+        <About />
+        <Projects />
+        <Experience />
+        <div id="github">
+          <GitHubContributions />
+        </div>
+        <Testimonials />
+        <Contact />
+      </main>
+      <Footer />
+    </>
   );
 }

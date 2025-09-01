@@ -72,10 +72,10 @@ export const About = () => {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              <div className="w-64 h-64 mx-auto relative">
+              <div className="w-80 h-96 mx-auto relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full blur-xl opacity-30 animate-pulse"></div>
                 <Image
-                  src="/ravindra_profile.png"
+                  src="/ravindra.jpeg"
                   alt="Ravindra Choudhary"
                   fill
                   className="object-cover rounded-full border-4 border-white/20"

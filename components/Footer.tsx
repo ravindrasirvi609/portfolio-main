@@ -78,12 +78,12 @@ export const Footer = () => {
             </h4>
             <div className="space-y-3">
               <motion.a
-                href="mailto:ravindra@example.com"
+                href="mailto:dev@ravindrachoudhary.in"
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors duration-200"
               >
                 <Mail className="w-4 h-4" />
-                ravindra@example.com
+                dev@ravindrachoudhary.in
               </motion.a>
             </div>
 

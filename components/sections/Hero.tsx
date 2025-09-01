@@ -8,7 +8,7 @@ import ThreeGlobe from "three-globe";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   Loader,
-  Download,
+  MessageCircle,
   Mail,
   ArrowDown,
   Github,
@@ -203,10 +203,16 @@ export default function Hero() {
             >
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white px-8 py-3 text-lg font-semibold"
+                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-3 text-lg font-semibold"
+                onClick={() => {
+                  window.open(
+                    "https://wa.me/918107199052?text=Hi%20Ravindra,%20I%20would%20like%20to%20connect%20with%20you!",
+                    "_blank"
+                  );
+                }}
               >
-                <Download className="w-5 h-5 mr-2" />
-                Download Resume
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Contact Me
               </Button>
               <Button
                 variant="outline"

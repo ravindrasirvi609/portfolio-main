@@ -219,10 +219,10 @@ export default function Hero() {
                 size="lg"
                 className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-8 py-3 text-lg font-semibold"
                 onClick={() => {
-                  const contactSection = document.getElementById("contact");
-                  if (contactSection) {
-                    contactSection.scrollIntoView({ behavior: "smooth" });
-                  }
+                  window.open(
+                    "mailto:dev@ravindrachoudhary.in?subject=Hello%20Ravindra&body=Hi%20Ravindra,%0A%0AI%20would%20like%20to%20connect%20with%20you.",
+                    "_blank"
+                  );
                 }}
               >
                 <Mail className="w-5 h-5 mr-2" />

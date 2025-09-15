@@ -230,7 +230,7 @@ export const workExperience = [
     title: "Angular Developer",
     desc: "Developed a high-performance PWA with push notifications and complex dynamic forms. Built a reusable frontend framework to accelerate development.",
     thumbnail: "/api/placeholder/400/200",
-    company: "Viklele Consulting",
+    company: "CVS Health",
     duration: "Dec 2024 - Present",
   },
   {

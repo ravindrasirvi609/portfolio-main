@@ -281,7 +281,7 @@ export default function Hero() {
           {
             title: "Experience",
             items: [
-              "Viklele Consulting – Software Engineer (Dec 2024 → Present)\nCVS Health USA real-time staff tracking & advanced routing.",
+              "CVS Health – Software Engineer (Dec 2024 → Present)\nCVS Health USA real-time staff tracking & advanced routing.",
               "Operant Pharmacy – Software Engineer (Jun 2023 → Nov 2024)\nNext.js pharmacy research platform, Razorpay payments, scalable DB design.",
               "Quadwave Consulting – Solution Developer (Apr 2022 → May 2023)\nASP.NET Core & Angular risk-management tool, REST APIs.",
             ],

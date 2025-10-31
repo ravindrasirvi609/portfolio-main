@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-background relative overflow-x-hidden">
+      <main className="min-h-screen bg-background relative overflow-x-hidden w-full">
         <Hero />
         <About />
         <Projects />

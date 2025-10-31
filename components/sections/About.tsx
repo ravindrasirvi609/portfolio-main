@@ -1,5 +1,5 @@
 "use client";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { skills } from "@/data";
 import {
   Zap,
@@ -14,10 +14,6 @@ import {
 import Image from "next/image";
 
 export const About = () => {
-  const { scrollYProgress } = useScroll();
-  const rotateY = useTransform(scrollYProgress, [0.05, 0.25], [0, 360]);
-  const x = useTransform(scrollYProgress, [0.05, 0.25], ["-100%", "0%"]);
-
   const skillCategories = [
     {
       title: "Frontend",
@@ -42,28 +38,34 @@ export const About = () => {
   return (
     <section
       id="about"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden py-20"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden py-12 sm:py-16 md:py-20"
     >
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-3 sm:mb-4">
             About Me
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto px-4">
             Passionate full-stack developer with expertise in modern web
             technologies
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* Left - Personal Info & Highlights */}
-          <motion.div style={{ rotateY, x }} className="space-y-8">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="space-y-6 sm:space-y-8"
+          >
             {/* Profile Image */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -72,7 +74,7 @@ export const About = () => {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              <div className="w-80 h-96 mx-auto relative">
+              <div className="w-48 h-60 sm:w-64 sm:h-80 lg:w-80 lg:h-96 mx-auto relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full blur-xl opacity-30 animate-pulse"></div>
                 <Image
                   src="/ravindra.jpeg"
@@ -84,7 +86,7 @@ export const About = () => {
             </motion.div>
 
             {/* Personal Highlights */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {[
                 {
                   Icon: GraduationCap,
@@ -112,12 +114,18 @@ export const About = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   whileHover={{ scale: 1.02, x: 10 }}
-                  className="flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
+                  className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
                 >
-                  <Icon className={`w-8 h-8 ${color}`} />
+                  <Icon
+                    className={`w-6 h-6 sm:w-8 sm:h-8 ${color} flex-shrink-0`}
+                  />
                   <div>
-                    <h3 className="text-xl font-bold text-white">{title}</h3>
-                    <p className="text-slate-300">{desc}</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-white">
+                      {title}
+                    </h3>
+                    <p className="text-sm sm:text-base text-slate-300">
+                      {desc}
+                    </p>
                   </div>
                 </motion.div>
               ))}
@@ -130,14 +138,14 @@ export const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8"
           >
-            <h3 className="text-3xl font-bold text-white mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">
               Skills & Expertise
             </h3>
 
             {/* Skill Categories */}
-            <div className="space-y-6">
+            <div className="space-y-5 sm:space-y-6">
               {skillCategories.map((category, categoryIndex) => {
                 const IconComponent = category.icon;
                 return (
@@ -147,20 +155,20 @@ export const About = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: categoryIndex * 0.2 }}
-                    className="space-y-4"
+                    className="space-y-3 sm:space-y-4"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <div
-                        className={`p-2 rounded-lg bg-gradient-to-r ${category.color}`}
+                        className={`p-1.5 sm:p-2 rounded-lg bg-gradient-to-r ${category.color}`}
                       >
-                        <IconComponent className="w-5 h-5 text-white" />
+                        <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </div>
-                      <h4 className="text-xl font-semibold text-white">
+                      <h4 className="text-lg sm:text-xl font-semibold text-white">
                         {category.title}
                       </h4>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2.5 sm:space-y-3">
                       {category.skills.map((skillName, skillIndex) => {
                         const skill = skills.find((s) => s.name === skillName);
                         if (!skill) return null;
@@ -175,17 +183,17 @@ export const About = () => {
                               duration: 1,
                               delay: categoryIndex * 0.2 + skillIndex * 0.1,
                             }}
-                            className="space-y-2"
+                            className="space-y-1.5 sm:space-y-2"
                           >
-                            <div className="flex justify-between text-white text-sm">
+                            <div className="flex justify-between text-white text-xs sm:text-sm">
                               <span className="font-medium">{skill.name}</span>
                               <span className="text-gray-300">
                                 {skill.level}%
                               </span>
                             </div>
-                            <div className="w-full bg-slate-700/50 rounded-full h-2 overflow-hidden">
+                            <div className="w-full bg-slate-700/50 rounded-full h-1.5 sm:h-2 overflow-hidden">
                               <motion.div
-                                className={`h-2 bg-gradient-to-r ${category.color} rounded-full`}
+                                className={`h-1.5 sm:h-2 bg-gradient-to-r ${category.color} rounded-full`}
                                 initial={{ width: 0 }}
                                 whileInView={{ width: `${skill.level}%` }}
                                 viewport={{ once: true }}
@@ -213,7 +221,7 @@ export const About = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="grid grid-cols-2 gap-4 mt-8"
+              className="grid grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8"
             >
               {[
                 {
@@ -231,11 +239,15 @@ export const About = () => {
               ].map(({ Icon, title, desc, color }) => (
                 <div
                   key={title}
-                  className="p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 text-center"
+                  className="p-3 sm:p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 text-center"
                 >
-                  <Icon className={`w-8 h-8 ${color} mx-auto mb-2`} />
-                  <h4 className="text-white font-semibold">{title}</h4>
-                  <p className="text-slate-300 text-sm">{desc}</p>
+                  <Icon
+                    className={`w-6 h-6 sm:w-8 sm:h-8 ${color} mx-auto mb-1.5 sm:mb-2`}
+                  />
+                  <h4 className="text-white font-semibold text-sm sm:text-base">
+                    {title}
+                  </h4>
+                  <p className="text-slate-300 text-xs sm:text-sm">{desc}</p>
                 </div>
               ))}
             </motion.div>

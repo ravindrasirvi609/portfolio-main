@@ -162,14 +162,14 @@ export default function Hero() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
-            className="pointer-events-auto text-center max-w-4xl mx-auto px-6"
+            className="pointer-events-auto text-center max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-0"
           >
             {/* Main Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter bg-gradient-to-r from-cyan-300 via-indigo-400 to-purple-500 bg-clip-text text-transparent leading-tight"
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter bg-gradient-to-r from-cyan-300 via-indigo-400 to-purple-500 bg-clip-text text-transparent leading-tight"
             >
               Ravindra Choudhary
             </motion.h1>
@@ -179,7 +179,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.4 }}
-              className="mt-6 text-xl md:text-2xl lg:text-3xl text-gray-200 font-light"
+              className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-200 font-light"
             >
               Full-Stack Developer
             </motion.p>
@@ -189,7 +189,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.6 }}
-              className="mt-3 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto"
+              className="mt-2 sm:mt-3 text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto px-4"
             >
               Building scalable web applications with modern tech
             </motion.p>
@@ -199,11 +199,11 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.8 }}
-              className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center"
+              className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
             >
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-3 text-lg font-semibold"
+                className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold"
                 onClick={() => {
                   window.open(
                     "https://wa.me/918107199052?text=Hi%20Ravindra,%20I%20would%20like%20to%20connect%20with%20you!",
@@ -211,13 +211,13 @@ export default function Hero() {
                   );
                 }}
               >
-                <MessageCircle className="w-5 h-5 mr-2" />
+                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Contact Me
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-8 py-3 text-lg font-semibold"
+                className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold"
                 onClick={() => {
                   window.open(
                     "mailto:dev@ravindrachoudhary.in?subject=Hello%20Ravindra&body=Hi%20Ravindra,%0A%0AI%20would%20like%20to%20connect%20with%20you.",
@@ -225,7 +225,7 @@ export default function Hero() {
                   );
                 }}
               >
-                <Mail className="w-5 h-5 mr-2" />
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Get in Touch
               </Button>
             </motion.div>
@@ -235,7 +235,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 1 }}
-              className="mt-8 flex justify-center space-x-6"
+              className="mt-6 sm:mt-8 flex justify-center space-x-4 sm:space-x-6"
             >
               {socialMedia.map((social, index) => (
                 <motion.a
@@ -245,7 +245,7 @@ export default function Hero() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-200"
+                  className="p-2 sm:p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-200"
                 >
                   {social.icon === Github ? (
                     <GithubIcon />
@@ -263,14 +263,16 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 1.2 }}
-              className="mt-12 flex flex-col items-center"
+              className="mt-8 sm:mt-12 flex flex-col items-center"
             >
-              <p className="text-gray-400 text-sm mb-2">Scroll to explore</p>
+              <p className="text-gray-400 text-xs sm:text-sm mb-2">
+                Scroll to explore
+              </p>
               <motion.div
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <ArrowDown className="w-6 h-6 text-cyan-400" />
+                <ArrowDown className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" />
               </motion.div>
             </motion.div>
           </motion.div>
@@ -298,7 +300,7 @@ export default function Hero() {
         ].map((section, idx) => (
           <section
             key={idx}
-            className="h-screen flex items-center justify-center px-6"
+            className="h-screen flex items-center justify-center px-4 sm:px-6"
           >
             <motion.div
               initial={{ opacity: 0, y: 60 }}
@@ -307,10 +309,10 @@ export default function Hero() {
               transition={{ duration: 0.8 }}
               className="pointer-events-auto max-w-3xl text-center"
             >
-              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-cyan-300 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-cyan-300 to-purple-500 bg-clip-text text-transparent">
                 {section.title}
               </h2>
-              <div className="space-y-4 text-gray-200 text-lg md:text-xl">
+              <div className="space-y-3 sm:space-y-4 text-gray-200 text-base sm:text-lg md:text-xl">
                 {section.items.map((t, i) => (
                   <p key={i} className="leading-relaxed">
                     {t}

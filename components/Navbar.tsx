@@ -36,48 +36,56 @@ export const Navbar = () => {
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
+            className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent cursor-pointer"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
             RC
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
             {navItems.map((item) => (
               <motion.button
                 key={item.name}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => scrollToSection(item.link.slice(1))}
-                className="text-white/80 hover:text-white transition-colors duration-200 font-medium"
+                className="text-white/80 hover:text-white transition-colors duration-200 font-medium text-sm xl:text-base"
               >
                 {item.name}
               </motion.button>
             ))}
           </div>
 
-          {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* CTA Buttons - Desktop/Tablet */}
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-4">
             <Button
               variant="outline"
               size="sm"
-              className="border-white/20 text-white hover:bg-white/10 hover:border-white/40"
-              onClick={() => scrollToSection("contact")}
+              className="border-white/20 text-white hover:bg-white/10 hover:border-white/40 text-xs lg:text-sm px-3 lg:px-4"
+              onClick={() => {
+                window.open(
+                  "mailto:dev@ravindrachoudhary.in?subject=Hello%20Ravindra&body=Hi%20Ravindra,%0A%0AI%20would%20like%20to%20connect%20with%20you.",
+                  "_blank"
+                );
+              }}
             >
-              <Mail className="w-4 h-4 mr-2" />
-              Get in Touch
+              <Mail className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-2" />
+              <span className="hidden lg:inline">Get in Touch</span>
+              <span className="lg:hidden">Contact</span>
             </Button>
             <Button
               size="sm"
-              className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white"
+              className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white text-xs lg:text-sm px-3 lg:px-4"
             >
-              <Download className="w-4 h-4 mr-2" />
-              Resume
+              <Download className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-2" />
+              <span className="hidden lg:inline">Resume</span>
+              <span className="lg:hidden">CV</span>
             </Button>
           </div>
 
@@ -85,9 +93,14 @@ export const Navbar = () => {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-white"
+            className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+            aria-label="Toggle menu"
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isOpen ? (
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
+            ) : (
+              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+            )}
           </motion.button>
         </div>
       </div>
@@ -101,30 +114,41 @@ export const Navbar = () => {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white/10 backdrop-blur-md border-t border-white/20"
           >
-            <div className="container mx-auto px-6 py-4 space-y-4">
-              {navItems.map((item) => (
+            <div className="container mx-auto px-4 sm:px-6 py-4 space-y-3">
+              {navItems.map((item, index) => (
                 <motion.button
                   key={item.name}
-                  whileHover={{ x: 10 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => scrollToSection(item.link.slice(1))}
-                  className="block w-full text-left text-white/80 hover:text-white transition-colors duration-200 font-medium py-2"
+                  className="block w-full text-left text-white/80 hover:text-white active:text-cyan-400 transition-colors duration-200 font-medium py-3 px-4 hover:bg-white/5 rounded-lg"
                 >
                   {item.name}
                 </motion.button>
               ))}
-              <div className="pt-4 space-y-3">
+              <div className="pt-3 space-y-2 border-t border-white/10">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full border-white/20 text-white hover:bg-white/10 hover:border-white/40"
-                  onClick={() => scrollToSection("contact")}
+                  className="w-full border-white/20 text-white hover:bg-white/10 hover:border-white/40 justify-center"
+                  onClick={() => {
+                    window.open(
+                      "mailto:dev@ravindrachoudhary.in?subject=Hello%20Ravindra&body=Hi%20Ravindra,%0A%0AI%20would%20like%20to%20connect%20with%20you.",
+                      "_blank"
+                    );
+                    setIsOpen(false);
+                  }}
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   Get in Touch
                 </Button>
                 <Button
                   size="sm"
-                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white"
+                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white justify-center"
+                  onClick={() => setIsOpen(false)}
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Resume

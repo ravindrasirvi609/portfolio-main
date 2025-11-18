@@ -1,13 +1,9 @@
-// Hero.tsx – drop-in replacement
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import ThreeGlobe from "three-globe";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import {
-  Loader,
   MessageCircle,
   Mail,
   ArrowDown,
@@ -15,8 +11,9 @@ import {
   Linkedin,
   Twitter,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { socialMedia } from "@/data";
+import * as THREE from "three";
+import gsap from "gsap";
 
 /* ---------- Icon helpers ---------- */
 const GithubIcon = () => (
@@ -35,249 +32,245 @@ const TwitterIcon = () => (
   </svg>
 );
 
-/* ---------- 3-D Globe + Scroll ---------- */
 export default function Hero() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { scrollYProgress } = useScroll();
-  const cameraZ = useTransform(scrollYProgress, [0, 0.5, 1], [300, 100, 800]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+  const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const mousePositionRef = useRef({ x: 0, y: 0 });
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = e.clientX / window.innerWidth - 0.5;
+      const y = e.clientY / window.innerHeight - 0.5;
+      setMousePosition({ x, y });
+      mousePositionRef.current = { x, y };
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  // GSAP Text Reveal Effect
+  useEffect(() => {
+    if (titleRef.current) {
+      gsap.fromTo(
+        titleRef.current,
+        { opacity: 0, y: 50, skewY: 7 },
+        {
+          opacity: 1,
+          y: 0,
+          skewY: 0,
+          duration: 1.5,
+          ease: "power4.out",
+          delay: 0.2,
+        }
+      );
+    }
+  }, []);
+
+  // Three.js Scene
+  useEffect(() => {
+    if (!containerRef.current) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000510);
-
     const camera = new THREE.PerspectiveCamera(
-      45,
+      75,
       window.innerWidth / window.innerHeight,
       0.1,
-      2000
+      1000
     );
-    camera.position.set(0, 0, 300);
+    camera.position.z = 3;
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvasRef.current,
-      antialias: true,
-      alpha: true,
-    });
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    containerRef.current.appendChild(renderer.domElement);
 
-    /* Lighting */
-    scene.add(new THREE.AmbientLight(0xcccccc, 0.8));
-    const sun = new THREE.DirectionalLight(0xffffff, 1.8);
-    sun.position.set(1, 1, 1);
-    scene.add(sun);
+    // Particles
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 5000;
+    const posArray = new Float32Array(particlesCount * 3);
 
-    /* Starfield */
-    const starVertices = new Float32Array(15_000 * 3).map(() =>
-      THREE.MathUtils.randFloatSpread(2000)
-    );
-    const starGeo = new THREE.BufferGeometry();
-    starGeo.setAttribute(
+    for (let i = 0; i < particlesCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 5;
+    }
+
+    particlesGeometry.setAttribute(
       "position",
-      new THREE.BufferAttribute(starVertices, 3)
+      new THREE.BufferAttribute(posArray, 3)
     );
-    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8 });
-    const stars = new THREE.Points(starGeo, starMat);
-    scene.add(stars);
 
-    /* Globe */
-    const globe = new ThreeGlobe()
-      .globeImageUrl(
-        "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-      )
-      .atmosphereColor("#3a92ff")
-      .atmosphereAltitude(0.25);
+    const particlesMaterial = new THREE.PointsMaterial({
+      size: 0.005,
+      color: 0x00ffff,
+      transparent: true,
+      opacity: 0.8,
+    });
 
-    globe.rotateY(-Math.PI * 0.5);
-    scene.add(globe);
+    const particlesMesh = new THREE.Points(
+      particlesGeometry,
+      particlesMaterial
+    );
+    scene.add(particlesMesh);
 
-    /* Controls */
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 100;
-    controls.maxDistance = 900;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.4;
-    controls.enablePan = false;
-    controls.enableZoom = false;
+    // Sphere
+    const sphereGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+    const sphereMaterial = new THREE.PointsMaterial({
+      size: 0.015,
+      color: 0x8a2be2,
+      transparent: true,
+      opacity: 0.6,
+    });
+    const sphereMesh = new THREE.Points(sphereGeometry, sphereMaterial);
+    scene.add(sphereMesh);
 
-    /* Resize handler */
-    const onResize = () => {
+    // Animation
+    let animationFrameId: number;
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+
+      particlesMesh.rotation.y += 0.0005;
+      particlesMesh.rotation.x += 0.0002;
+
+      sphereMesh.rotation.y -= 0.001;
+      sphereMesh.rotation.x -= 0.0005;
+
+      // Mouse interaction
+      const { x, y } = mousePositionRef.current;
+      camera.position.x += (x * 0.5 - camera.position.x) * 0.05;
+      camera.position.y += (-y * 0.5 - camera.position.y) * 0.05;
+      camera.lookAt(scene.position);
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
-    window.addEventListener("resize", onResize);
 
-    /* Animation loop */
-    const animate = () => {
-      camera.position.z = cameraZ.get();
-      controls.update();
-      stars.rotation.y += 0.0001;
-      renderer.render(scene, camera);
-    };
-    renderer.setAnimationLoop(animate);
-    setIsLoading(false);
+    window.addEventListener("resize", handleResize);
 
-    /* Cleanup */
+    const currentContainer = containerRef.current;
+
     return () => {
-      renderer.setAnimationLoop(null);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(animationFrameId);
+      if (currentContainer && currentContainer.contains(renderer.domElement)) {
+        currentContainer.removeChild(renderer.domElement);
+      }
+      particlesGeometry.dispose();
+      particlesMaterial.dispose();
+      sphereGeometry.dispose();
+      sphereMaterial.dispose();
       renderer.dispose();
-      scene.traverse((obj) => {
-        if ((obj as any).geometry) (obj as any).geometry.dispose?.();
-        const mat = obj as any;
-        if (mat.material) {
-          if (Array.isArray(mat.material))
-            mat.material.forEach((m: any) => m.dispose?.());
-          else mat.material.dispose?.();
-        }
-      });
     };
-  }, [cameraZ]);
+  }, []);
 
   return (
-    <>
-      {/* Loading overlay */}
-      {isLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
-          <div className="flex flex-col items-center gap-3">
-            <Loader className="w-10 h-10 animate-spin text-cyan-400" />
-            <p className="text-cyan-300 text-lg">Loading Earth…</p>
+    <div className="relative w-full h-screen overflow-hidden bg-black">
+      <div ref={containerRef} className="fixed inset-0 z-0" />
+
+      <div className="relative z-10 w-full h-full flex flex-col justify-center items-center text-center px-4">
+        <motion.div
+          style={{ y: y1, x: mousePosition.x * 20 }}
+          className="flex flex-col items-center"
+        >
+          <div className="overflow-hidden">
+            <h1
+              ref={titleRef}
+              className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-white mb-4 mix-blend-difference"
+            >
+              RAVINDRA
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">
+                CHOUDHARY
+              </span>
+            </h1>
           </div>
-        </div>
-      )}
 
-      {/* 3-D canvas */}
-      <canvas ref={canvasRef} className="fixed inset-0 z-0" />
-
-      {/* Scrollable content */}
-      <div className="relative z-10 w-full h-screen pointer-events-none">
-        <section className="h-full flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="pointer-events-auto text-center max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-0"
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto font-light tracking-wide"
           >
-            {/* Main Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter bg-gradient-to-r from-cyan-300 via-indigo-400 to-purple-500 bg-clip-text text-transparent leading-tight"
-            >
-              Ravindra Choudhary
-            </motion.h1>
+            Crafting digital experiences with code and creativity.
+          </motion.p>
 
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.4 }}
-              className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-200 font-light"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+            className="mt-8 flex flex-col sm:flex-row gap-4"
+          >
+            <Button
+              size="lg"
+              className="bg-white text-black hover:bg-gray-200 rounded-full px-8 py-6 text-lg font-medium transition-all duration-300 hover:scale-105"
+              onClick={() => {
+                window.open(
+                  "https://wa.me/918107199052?text=Hi%20Ravindra,%20I%20would%20like%20to%20connect%20with%20you!",
+                  "_blank"
+                );
+              }}
             >
-              Full-Stack Developer
-            </motion.p>
+              <MessageCircle className="mr-2 w-5 h-5" />
+              Let&apos;s Talk
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-white text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg font-medium backdrop-blur-sm transition-all duration-300 hover:scale-105"
+              onClick={() => {
+                window.open(
+                  "mailto:dev@ravindrachoudhary.in?subject=Hello%20Ravindra&body=Hi%20Ravindra,%0A%0AI%20would%20like%20to%20connect%20with%20you.",
+                  "_blank"
+                );
+              }}
+            >
+              <Mail className="mr-2 w-5 h-5" />
+              Email Me
+            </Button>
+          </motion.div>
 
-            {/* Tagline */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.6 }}
-              className="mt-2 sm:mt-3 text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto px-4"
-            >
-              Building scalable web applications with modern tech
-            </motion.p>
-
-            {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.8 }}
-              className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
-            >
-              <Button
-                size="lg"
-                className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold"
-                onClick={() => {
-                  window.open(
-                    "https://wa.me/918107199052?text=Hi%20Ravindra,%20I%20would%20like%20to%20connect%20with%20you!",
-                    "_blank"
-                  );
-                }}
-              >
-                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Contact Me
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold"
-                onClick={() => {
-                  window.open(
-                    "mailto:dev@ravindrachoudhary.in?subject=Hello%20Ravindra&body=Hi%20Ravindra,%0A%0AI%20would%20like%20to%20connect%20with%20you.",
-                    "_blank"
-                  );
-                }}
-              >
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Get in Touch
-              </Button>
-            </motion.div>
-
-            {/* Social Links */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 1 }}
-              className="mt-6 sm:mt-8 flex justify-center space-x-4 sm:space-x-6"
-            >
-              {socialMedia.map((social, index) => (
-                <motion.a
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 1 }}
+            className="mt-12 flex gap-6"
+          >
+            {socialMedia.map((social) => {
+              const Icon = social.icon;
+              return (
+                <a
                   key={social.id}
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="p-2 sm:p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-200"
+                  className="text-gray-400 hover:text-white transition-colors duration-300 transform hover:scale-110"
                 >
-                  {social.icon === Github ? (
-                    <GithubIcon />
-                  ) : social.icon === Linkedin ? (
-                    <LinkedinIcon />
-                  ) : (
-                    <TwitterIcon />
-                  )}
-                </motion.a>
-              ))}
-            </motion.div>
-
-            {/* Scroll Indicator */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.2 }}
-              className="mt-8 sm:mt-12 flex flex-col items-center"
-            >
-              <p className="text-gray-400 text-xs sm:text-sm mb-2">
-                Scroll to explore
-              </p>
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <ArrowDown className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" />
-              </motion.div>
-            </motion.div>
+                  <Icon className="w-6 h-6" />
+                </a>
+              );
+            })}
           </motion.div>
-        </section>
+        </motion.div>
+
+        <motion.div
+          style={{ y: y2 }}
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <ArrowDown className="w-6 h-6 text-gray-500" />
+        </motion.div>
       </div>
-    </>
+    </div>
   );
 }

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./provider";
+import SmoothScroll from "@/components/providers/SmoothScroll";
+import CustomCursor from "@/components/ui/CustomCursor";
+import ScrollProgress from "@/components/ui/ScrollProgress";
 import { Analytics } from "@vercel/analytics/react";
 import {
   getSiteMetadata,
@@ -69,7 +72,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <CustomCursor />
+          <ScrollProgress />
+          <SmoothScroll>{children}</SmoothScroll>
           <Analytics />
         </ThemeProvider>
         <script

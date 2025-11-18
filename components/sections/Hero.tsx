@@ -156,8 +156,8 @@ export default function Hero() {
       <canvas ref={canvasRef} className="fixed inset-0 z-0" />
 
       {/* Scrollable content */}
-      <div className="relative z-10 w-full h-[300vh] pointer-events-none">
-        <section className="h-screen flex items-center justify-center">
+      <div className="relative z-10 w-full h-screen pointer-events-none">
+        <section className="h-full flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -277,51 +277,6 @@ export default function Hero() {
             </motion.div>
           </motion.div>
         </section>
-
-        {/* Résumé sections */}
-        {[
-          {
-            title: "Experience",
-            items: [
-              "CVS Health – Software Engineer (Dec 2024 → Present)\nCVS Health USA real-time staff tracking & advanced routing.",
-              "Operant Pharmacy – Software Engineer (Jun 2023 → Nov 2024)\nNext.js pharmacy research platform, Razorpay payments, scalable DB design.",
-              "Quadwave Consulting – Solution Developer (Apr 2022 → May 2023)\nASP.NET Core & Angular risk-management tool, REST APIs.",
-            ],
-          },
-          {
-            title: "Projects",
-            items: [
-              "Business Risk Management Tool – ASP.NET Core + Angular",
-              "Social-Media Web App – Angular, Auth, Payments",
-              "Pharmacy Research Platform – Next.js, Data-Viz",
-              "Lift – Real-time Car-Pooling, Mapbox, Chat",
-            ],
-          },
-        ].map((section, idx) => (
-          <section
-            key={idx}
-            className="h-screen flex items-center justify-center px-4 sm:px-6"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="pointer-events-auto max-w-3xl text-center"
-            >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-cyan-300 to-purple-500 bg-clip-text text-transparent">
-                {section.title}
-              </h2>
-              <div className="space-y-3 sm:space-y-4 text-gray-200 text-base sm:text-lg md:text-xl">
-                {section.items.map((t, i) => (
-                  <p key={i} className="leading-relaxed">
-                    {t}
-                  </p>
-                ))}
-              </div>
-            </motion.div>
-          </section>
-        ))}
       </div>
     </>
   );

@@ -42,16 +42,15 @@ export const Footer = () => {
               Quick Links
             </h4>
             <ul className="space-y-1.5 sm:space-y-2">
-              {["About", "Projects", "Experience", "Contact"].map(
-                (link, index) => (
+              {["About", "Products", "Case Studies", "Contact"].map(
+                (link) => (
                   <li key={link}>
                     <motion.button
                       whileHover={{ x: 5 }}
-                      className="text-gray-300 hover:text-white transition-colors duration-200 text-sm sm:text-base"
+                      className="text-gray-300 hover:text-white transition-colors duration-200 text-sm sm:text-base capitalize"
                       onClick={() => {
-                        const element = document.getElementById(
-                          link.toLowerCase()
-                        );
+                        const elementId = link.toLowerCase().replace(" ", "-");
+                        const element = document.getElementById(elementId);
                         if (element) {
                           element.scrollIntoView({ behavior: "smooth" });
                         }

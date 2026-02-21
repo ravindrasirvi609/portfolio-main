@@ -1,257 +1,145 @@
 "use client";
-import { motion } from "framer-motion";
-import { skills } from "@/data";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { aboutData } from "@/data";
 import {
   Zap,
-  Palette,
-  Users,
-  Code,
+  Globe,
   Database,
-  Wrench,
-  GraduationCap,
-  Clock,
+  Cpu,
 } from "lucide-react";
 import Image from "next/image";
+import { useRef } from "react";
 
 export const About = () => {
-  const skillCategories = [
-    {
-      title: "Frontend",
-      icon: Code,
-      skills: ["Angular", "Next.js / React", "TypeScript / JavaScript"],
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      title: "Backend",
-      icon: Database,
-      skills: [".NET Core", "GraphQL", "REST API Design"],
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      title: "Tools & Others",
-      icon: Wrench,
-      skills: ["PWA & Push Notifications", "MySQL", "Agile / Git / CI-CD"],
-      color: "from-green-500 to-emerald-500",
-    },
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const y1 = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [-50, 50]);
+
+  const highlights = [
+    { title: "Scalable Architecture", icon: Database, color: "text-cyan-400" },
+    { title: "High Performance", icon: Zap, color: "text-purple-400" },
+    { title: "Global Reach", icon: Globe, color: "text-pink-400" },
+    { title: "Smart Systems", icon: Cpu, color: "text-emerald-400" },
   ];
 
   return (
     <section
       id="about"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden py-12 sm:py-16 md:py-20"
+      ref={containerRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden py-24 sm:py-32 bg-[#050505] border-t border-white/5"
     >
-      <div className="container mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-12 sm:mb-16"
-        >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-3 sm:mb-4">
-            About Me
-          </h2>
-          <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto px-4">
-            Passionate full-stack developer with expertise in modern web
-            technologies
-          </p>
-        </motion.div>
+      {/* Abstract Background */}
+      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none overflow-hidden">
+        <motion.div style={{ y: y1 }} className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-cyan-900/30 blur-[120px]" />
+        <motion.div style={{ y: y2 }} className="absolute top-[40%] -right-[10%] w-[40%] h-[60%] rounded-full bg-purple-900/30 blur-[150px]" />
+      </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-          {/* Left - Personal Info & Highlights */}
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          
+          {/* Left - Storytelling */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6 sm:space-y-8"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="order-2 lg:order-1"
           >
-            {/* Profile Image */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="w-48 h-60 sm:w-64 sm:h-80 lg:w-80 lg:h-96 mx-auto relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full blur-xl opacity-30 animate-pulse"></div>
-                <Image
-                  src="/ravindra.jpeg"
-                  alt="Ravindra Choudhary"
-                  fill
-                  className="object-cover rounded-full border-4 border-white/20"
-                />
-              </div>
-            </motion.div>
-
-            {/* Personal Highlights */}
-            <div className="space-y-4 sm:space-y-6">
-              {[
-                {
-                  Icon: GraduationCap,
-                  title: "Education",
-                  desc: "Computer Science Graduate",
-                  color: "text-blue-400",
-                },
-                {
-                  Icon: Clock,
-                  title: "Experience",
-                  desc: "3+ Years in Software Development",
-                  color: "text-purple-400",
-                },
-                {
-                  Icon: Users,
-                  title: "Collaboration",
-                  desc: "Team-oriented developer",
-                  color: "text-green-400",
-                },
-              ].map(({ Icon, title, desc, color }, index) => (
+            <div className="space-y-8">
+              <div>
                 <motion.div
-                  key={title}
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02, x: 10 }}
-                  className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                  className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-sm font-medium text-gray-300 mb-6"
                 >
-                  <Icon
-                    className={`w-6 h-6 sm:w-8 sm:h-8 ${color} flex-shrink-0`}
-                  />
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-white">
-                      {title}
-                    </h3>
-                    <p className="text-sm sm:text-base text-slate-300">
-                      {desc}
-                    </p>
-                  </div>
+                  The Architect
                 </motion.div>
-              ))}
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight tracking-tighter mb-6">
+                  Not just building apps. <br/>
+                  <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                    Engineering Systems.
+                  </span>
+                </h2>
+                
+                <p className="text-xl md:text-2xl text-gray-200 font-light leading-relaxed">
+                  {aboutData.role}
+                </p>
+              </div>
+
+              <div className="h-px w-full bg-gradient-to-r from-white/20 to-transparent" />
+
+              <p className="text-lg text-gray-400 leading-relaxed font-light">
+                {aboutData.story}
+              </p>
+
+              <div className="grid grid-cols-2 gap-6 pt-4">
+                {highlights.map((item, i) => (
+                  <motion.div 
+                    key={item.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 + (i * 0.1), duration: 0.5 }}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-md">
+                      <item.icon className={`w-6 h-6 ${item.color}`} />
+                    </div>
+                    <span className="text-gray-300 font-medium text-sm md:text-base">{item.title}</span>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
 
-          {/* Right - Skills & Expertise */}
+          {/* Right - Visual / Image */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6 sm:space-y-8"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            className="order-1 lg:order-2 relative"
           >
-            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">
-              Skills & Expertise
-            </h3>
-
-            {/* Skill Categories */}
-            <div className="space-y-5 sm:space-y-6">
-              {skillCategories.map((category, categoryIndex) => {
-                const IconComponent = category.icon;
-                return (
-                  <motion.div
-                    key={category.title}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: categoryIndex * 0.2 }}
-                    className="space-y-3 sm:space-y-4"
-                  >
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div
-                        className={`p-1.5 sm:p-2 rounded-lg bg-gradient-to-r ${category.color}`}
-                      >
-                        <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      </div>
-                      <h4 className="text-lg sm:text-xl font-semibold text-white">
-                        {category.title}
-                      </h4>
-                    </div>
-
-                    <div className="space-y-2.5 sm:space-y-3">
-                      {category.skills.map((skillName, skillIndex) => {
-                        const skill = skills.find((s) => s.name === skillName);
-                        if (!skill) return null;
-
-                        return (
-                          <motion.div
-                            key={skill.name}
-                            initial={{ opacity: 0, width: 0 }}
-                            whileInView={{ opacity: 1, width: "100%" }}
-                            viewport={{ once: true }}
-                            transition={{
-                              duration: 1,
-                              delay: categoryIndex * 0.2 + skillIndex * 0.1,
-                            }}
-                            className="space-y-1.5 sm:space-y-2"
-                          >
-                            <div className="flex justify-between text-white text-xs sm:text-sm">
-                              <span className="font-medium">{skill.name}</span>
-                              <span className="text-gray-300">
-                                {skill.level}%
-                              </span>
-                            </div>
-                            <div className="w-full bg-slate-700/50 rounded-full h-1.5 sm:h-2 overflow-hidden">
-                              <motion.div
-                                className={`h-1.5 sm:h-2 bg-gradient-to-r ${category.color} rounded-full`}
-                                initial={{ width: 0 }}
-                                whileInView={{ width: `${skill.level}%` }}
-                                viewport={{ once: true }}
-                                transition={{
-                                  duration: 1.5,
-                                  delay:
-                                    categoryIndex * 0.2 +
-                                    skillIndex * 0.1 +
-                                    0.3,
-                                }}
-                              />
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Additional Highlights */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="grid grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8"
-            >
-              {[
-                {
-                  Icon: Zap,
-                  title: "Performance",
-                  desc: "Lightning-fast apps",
-                  color: "text-yellow-400",
-                },
-                {
-                  Icon: Palette,
-                  title: "Design",
-                  desc: "Beautiful UIs",
-                  color: "text-pink-400",
-                },
-              ].map(({ Icon, title, desc, color }) => (
-                <div
-                  key={title}
-                  className="p-3 sm:p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 text-center"
-                >
-                  <Icon
-                    className={`w-6 h-6 sm:w-8 sm:h-8 ${color} mx-auto mb-1.5 sm:mb-2`}
+            <div className="relative w-full aspect-[4/5] max-w-md mx-auto lg:max-w-none group perspective-1000">
+              {/* Glass container */}
+              <motion.div 
+                 whileHover={{ rotateY: -5, rotateX: 5 }}
+                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                 className="absolute inset-0 rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm p-4 transform-gpu transition-all duration-500 hover:border-white/20"
+              >
+                <div className="relative w-full h-full rounded-xl overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 mix-blend-multiply" />
+                  <Image
+                    src="/ravindra.jpeg"
+                    alt="Ravindra Choudhary"
+                    fill
+                    className="object-cover transform transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0"
+                    priority
                   />
-                  <h4 className="text-white font-semibold text-sm sm:text-base">
-                    {title}
-                  </h4>
-                  <p className="text-slate-300 text-xs sm:text-sm">{desc}</p>
+                  
+                  {/* Overlay Accent */}
+                  <div className="absolute bottom-6 left-6 z-20">
+                     <div className="flex items-center gap-4">
+                        <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                        <span className="text-white font-mono text-sm tracking-widest uppercase">System Online</span>
+                     </div>
+                  </div>
                 </div>
-              ))}
-            </motion.div>
+              </motion.div>
+
+              {/* Decorative elements */}
+              <div className="absolute -top-6 -right-6 w-24 h-24 border-t-2 border-r-2 border-cyan-500/30 rounded-tr-3xl" />
+              <div className="absolute -bottom-6 -left-6 w-24 h-24 border-b-2 border-l-2 border-purple-500/30 rounded-bl-3xl" />
+            </div>
           </motion.div>
+
         </div>
       </div>
     </section>

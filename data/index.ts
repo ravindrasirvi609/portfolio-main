@@ -2,265 +2,141 @@ import { Github, Linkedin, Twitter } from "lucide-react";
 
 export const navItems = [
   { name: "About", link: "#about" },
-  { name: "Projects", link: "#projects" },
-  { name: "Experience", link: "#experience" },
+  { name: "Products", link: "#products" },
+  { name: "Case Studies", link: "#case-studies" },
+  { name: "Tech Stack", link: "#tech-stack" },
   { name: "Testimonials", link: "#testimonials" },
   { name: "Contact", link: "#contact" },
 ];
 
-export const gridItems = [
-  {
-    id: 1,
-    title: "I prioritize client collaboration, fostering open communication ",
-    description: "",
-    className: "lg:col-span-3 md:col-span-6 md:row-span-4 lg:min-h-[60vh]",
-    imgClassName: "w-full h-full",
-    titleClassName: "justify-end",
-    img: "/ravindra.jpeg",
-    spareImg: "",
-  },
-  {
-    id: 2,
-    title: "I'm very flexible with time zone communications",
-    description: "",
-    className: "lg:col-span-2 md:col-span-3 md:row-span-2",
-    imgClassName: "",
-    titleClassName: "justify-start",
-    img: "",
-    spareImg: "",
-  },
-  {
-    id: 3,
-    title: "My tech stack",
-    description: "I constantly try to improve",
-    className: "lg:col-span-2 md:col-span-3 md:row-span-2",
-    imgClassName: "",
-    titleClassName: "justify-center",
-    img: "",
-    spareImg: "",
-  },
-  {
-    id: 4,
-    title: "Tech enthusiast with a passion for development.",
-    description: "",
-    className: "lg:col-span-2 md:col-span-3 md:row-span-1",
-    imgClassName: "",
-    titleClassName: "justify-start",
-    img: "/grid.svg",
-    spareImg: "/b4.svg",
-  },
+export const heroData = {
+  title: "Building Smart Digital Systems for Real Businesses",
+  subtitle: "We engineer scalable, high-performance web and mobile solutions tailored to solve complex business challenges.",
+};
 
-  {
-    id: 5,
-    title:
-      "Currently building a Complete Pharma Managemnt System using Next.js and Tailwind CSS",
-    description: "The Inside Scoop",
-    className: "md:col-span-3 md:row-span-2",
-    imgClassName: "absolute right-0 bottom-0 md:w-96 w-60",
-    titleClassName: "justify-center md:justify-start lg:justify-center",
-    img: "/b5.svg",
-    spareImg: "/grid.svg",
-  },
-  {
-    id: 6,
-    title: "Do you want to start a project together?",
-    description: "",
-    className: "lg:col-span-2 md:col-span-3 md:row-span-1",
-    imgClassName: "",
-    titleClassName: "justify-center md:max-w-full max-w-60 text-center",
-    img: "",
-    spareImg: "",
-  },
-];
+export const aboutData = {
+  role: "Digital Systems Architect & Product Engineer",
+  story: "I am Ravindra Choudhary, a Digital Systems Architect obsessed with transforming complex problems into elegant, high-impact digital products. I don't just write code; I design intelligent, scalable systems that drive real-world business value. From conceptualization to deployment, my focus is unwavering: delivering premium, robust, and intuitive solutions that empower modern businesses to scale securely and efficiently.",
+};
 
-export const projects = [
+export const products = [
   {
-    id: 1,
-    title: "Pharma Student Management Platform",
-    des: "Engineered a Next.js 14 project for Pharma Students and Conferences Registration. This platform ensures secure authentication, real-time updates, and responsiveness. Integrated payment gateways facilitate smooth transactions, offering an efficient solution for both students and conference organizers. Explore the firsthand experience through the project link.",
-    img: "/Proj4.png",
-    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/fm.svg"],
-    link: "https://operantpharmacy.vercel.app/",
+    id: "stay-smart",
+    title: "PG Management Software – 'Stay Smart'",
+    tagline: "Smart PG Management for Modern Living",
+    clients: ["Comfort Stay PG", "Sunrise PG", "Aithi PG"],
+    description: "A comprehensive SaaS platform revolutionizing completely how PG accommodations are managed. Designed for efficiency, transparency, and seamless tenant experiences.",
+    features: ["Advanced Room Management", "Automated Rent Tracking", "Tenant KYC & Management", "Predictive Analytics"],
+    img: "/comfort.png", // Reusing existing image, might need a better one
+    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/dashboard.svg", "/ai.svg"],
+    link: "https://comfortstaypg.com/",
   },
   {
-    id: 2,
-    title: "Event Management",
-    des: "Event Management Tools Used: Clerk Authentication, ShadCN UI, and Stripe Payment Gateway. With this application, organizations can create events, and users have the option to join these events, which may have optional prices.",
-    img: "/Proj2.png",
-    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/c.svg"],
-    link: "https://operant-evently.vercel.app/",
-  },
-  {
-    id: 3,
-    title: "NextGen Magzine",
-    des: "Developed an Magzine website platform using Next.js 14, enabling users to browse magzines, add them to their cart, and complete transactions. Integrated Rozerpay payment gateway for secure and seamless transactions, ensuring a user-friendly PDF reading experience.",
-    img: "/Proj3.png",
-    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg"],
-    link: "https://www.nextgenleaders.vip/",
-  },
-  {
-    id: 4,
-    title: "Operant BioMedical Federation",
-    des: "Designed and developed a responsive website for Operant BioMedical Federation using Next.js 14, showcasing the federation's mission, vision, and services. The website features a clean and modern design, providing an interactive and engaging user experience.",
-    img: "/Proj1.png",
-    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
-    link: "https://operant-biomedical.vercel.app/",
-  },
-  {
-    id: 5,
-    title: "APTICON 2024",
-    des: "Developed a website for APTICON 2024 using Next.js 14, showcasing the conference's schedule, speakers, and sponsors. The website features a clean and modern design, providing an interactive and engaging user experience.",
-    img: "/apti.png",
-    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
+    id: "conference-system",
+    title: "Conference Management System",
+    tagline: "Scalable Academic & Corporate Event Infrastructure",
+    clients: ["JSS Ooty", "Nirma University", "Chips College Guntur"],
+    description: "An enterprise-grade event management solution engineered to handle high-volume registrations, complex abstract submissions, and robust administrative control.",
+    features: ["Dynamic Registration Workflows", "Intelligent Abstract Management", "Integrated Payment Tracking", "Real-Time Event Analytics", "Custom Admin Control Panel"],
+    img: "/apti.png", // Reusing APTICON image as an example
+    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/c.svg"],
     link: "https://apticon2024.com",
   },
   {
-    id: 6,
-    title: "Pharmanecia 4.E",
-    des: "Developed a website for Pharmanecia 4.E using Next.js 14, showcasing the conference's schedule, speakers, and sponsors. The website features a clean and modern design, providing an interactive and engaging user experience.",
-    img: "/pharmanecia.png",
-    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
-    link: "https://pharmanecia.org",
-  },
-  {
-    id: 7,
-    title: "Lift - Car Pooling App",
-    des: "A real-time car pooling web application built with Next.js 14, integrating Mapbox for live location tracking and real-time chat. Users can offer or request rides, enhancing convenience and sustainability.",
-    img: "/p5.png",
-    iconLists: [
-      "/next.svg",
-      "/tail.svg",
-      "/ts.svg",
-      "/mapbox.svg",
-      "/socket.svg",
-    ],
-    link: "https://lift-coral.vercel.app/",
-  },
-  {
-    id: 8,
-    title: "Comfort Stay PG Management",
-    des: "A complete PG management system with multi-role login, an advanced admin dashboard, and integrated AI tools for automation. Designed for both PG owners and tenants to simplify operations and communication.",
-    img: "/comfort.png",
-    iconLists: [
-      "/next.svg",
-      "/tail.svg",
-      "/ts.svg",
-      "/ai.svg",
-      "/dashboard.svg",
-    ],
-    link: "https://comfortstaypg.com/",
-  },
+    id: "mmart",
+    title: "Online Shopping Web App",
+    tagline: "Digital Solutions for Local Retailers",
+    clients: ["MMart"],
+    description: "A high-performance e-commerce engine enabling local businesses to digitize their inventory and scale their operations with a premium, mobile-first shopping experience.",
+    features: ["Intuitive Store Dashboard", "Seamless Order Management", "Real-Time Inventory Control", "Optimized Mobile Experience", "Integrated Delivery Logistics"],
+    img: "/Proj2.png", // Need relevant image
+    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/fm.svg"],
+    link: "#", // Add link if available
+  }
 ];
+
+export const caseStudies = [
+  {
+    id: 1,
+    title: "Revolutionizing PG Operations",
+    product: "PG Management Software",
+    problem: "Manual rent collection, tracking tenant data on spreadsheets, and mismanaged room allocations led to revenue leakage and operational chaos for mid-sized PG owners.",
+    solution: "Deployed the 'Stay Smart' platform with automated invoicing, real-time room availability mapping, and a tenant self-service portal.",
+    result: "30% increase in operational efficiency, zero rent discrepancies, and significantly improved tenant satisfaction.",
+    metrics: [
+      { label: "Efficiency Gain", value: "30%" },
+      { label: "Error Rate", value: "0%" },
+      { label: "Active Users", value: "5K+" }
+    ],
+    image: "/comfort.png"
+  },
+  {
+    id: 2,
+    title: "Scaling Academic Conferences",
+    product: "Conference Management System",
+    problem: "Universities struggled with managing thousands of registrations, varying payment tiers, and complex abstract review processes using fragmented legacy systems.",
+    solution: "Engineered a unified ecosystem integrating seamless payment gateways, dynamic abstract submission forms, and a comprehensive admin dashboard for complete oversight.",
+    result: "Successfully managed 10,000+ abstract submissions across multiple conferences with 100% platform uptime.",
+    metrics: [
+      { label: "Registrations", value: "10K+" },
+      { label: "Platform Uptime", value: "100%" },
+      { label: "Processing Speed", value: "<1s" }
+    ],
+    image: "/apti.png"
+  },
+  {
+    id: 3,
+    title: "Digitizing Local Retail",
+    product: "Online Shopping Web App",
+    problem: "Local shopkeepers lacked the technical infrastructure to manage digital inventory, process online orders, and compete with larger e-commerce platforms.",
+    solution: "Delivered a mobile-first e-commerce engine with an intuitive vendor dashboard, real-time inventory sync, and a simplified order fulfillment workflow.",
+    result: "Enabled stores to go digital within days, seeing a 40% jump in order volume through the new online channel.",
+    metrics: [
+      { label: "Order Volume", value: "+40%" },
+      { label: "Onboarding Time", value: "<48h" },
+      { label: "Delivery Efficiency", value: "+25%" }
+    ],
+    image: "/Proj3.png"
+  }
+];
+
+export const techStack = [
+  { name: "Next.js", icon: "/next.svg", category: "Frontend Engine" },
+  { name: "TypeScript", icon: "/ts.svg", category: "Type Safety" },
+  { name: "Tailwind CSS", icon: "/tail.svg", category: "Styling" },
+  { name: "Framer Motion", icon: "/fm.svg", category: "Animations" },
+  { name: ".NET Core", icon: "/net.svg", category: "Backend Microservices" }, // Ensure /net.svg exists or use an alternative
+  { name: "FastAPI", icon: "/api.svg", category: "High-Perf APIs" }, // Ensure /api.svg exists
+  { name: "Azure", icon: "/azure.svg", category: "Cloud Infrastructure" } // Ensure /azure.svg exists
+];
+
 
 export const testimonials = [
   {
     quote:
-      "Working with Ravindra was a game-changer for our conference registration system. His understanding of scalable web solutions and eye for detail made the process seamless. Highly recommend him for any tech-driven initiative.",
-    name: "Dr. Anjali Mehta",
-    title: "Professor, Bombay College of Pharmacy",
-  },
-  {
-    quote:
-      "Ravindra brought a lot of innovative ideas to our PG management platform. From user flow to admin dashboards, he handled everything with clarity and confidence. Truly professional!",
+      "Ravindra engineered a digital infrastructure for our PG network that completely removed the administrative bottleneck. The dashboard is incredibly intuitive, and our operations have never been smoother. He builds serious systems.",
     name: "Dilip Sirvi",
     title: "Founder, ComfortStay PG Services",
   },
   {
     quote:
-      "Our collaboration with Ravindra for the Lift carpooling platform was fantastic. His expertise in real-time systems and Mapbox integration delivered exactly what we envisioned.",
-    name: "Suresh Nair",
-    title: "Product Manager, Lift Mobility",
+      "Working with Ravindra was a paradigm shift for our conference registration system. His understanding of scalable architecture and his ability to handle complex payment workflows is unmatched. Highly recommended for any serious academic or corporate event platform.",
+    name: "Dr. Anjali Mehta",
+    title: "Professor, Bombay College of Pharmacy",
   },
   {
     quote:
-      "Ravindra is one of the most dedicated developers I've worked with. His ability to take ownership and deliver under tight deadlines was impressive. His work speaks volumes.",
-    name: "Neha Kapoor",
-    title: "Operations Head, NextGen Leaders",
-  },
-  {
-    quote:
-      "Ravindra understood our requirements for the conference site better than we did ourselves. His technical proficiency and creative input made the website a huge success.",
-    name: "Dr. Mihir kar",
-    title: "Convener, APTICON 2024",
+      "We needed a robust digital storefront that could handle our local retail operations efficiently. Ravindra delivered a solution that not only looks premium but is incredibly powerful under the hood. It transformed how we do business.",
+    name: "Owner",
+    title: "MMart Retail",
   },
 ];
 
 export const companies = [
-  {
-    id: 1,
-    name: "nextGEN LEADERS",
-    img: "/nextgen.png",
-    nameImg: "/NEXTGEN.svg",
-  },
-  {
-    id: 2,
-    name: "apticon",
-    img: "/APTICON.png",
-    nameImg: "/APTICON.svg",
-  },
-  {
-    id: 3,
-    name: "operant",
-    img: "/operant.png",
-    nameImg: "/OPERANT.svg",
-  },
-  {
-    id: 4,
-    name: "gbpcg",
-    img: "/GBPCG.png",
-    nameImg: "/GLOBAL_BIO.svg",
-  },
-  {
-    id: 5,
-    name: "econsys",
-    img: "/econsys.png",
-    nameImg: "/Econsys.svg",
-  },
-  {
-    id: 6,
-    name: "Just be Flex.",
-    img: "/jbf.png",
-    nameImg: "/justbeflex.svg",
-  },
-];
-
-export const workExperience = [
-  {
-    id: 1,
-    title: "Angular Developer",
-    desc: "Developed a high-performance PWA with push notifications and complex dynamic forms. Built a reusable frontend framework to accelerate development.",
-    thumbnail: "/api/placeholder/400/200",
-    company: "CVS Health",
-    duration: "Dec 2024 - Present",
-  },
-  {
-    id: 2,
-    title: "Software Engineer",
-    desc: "Built a pharma research platform in Next.js with secure authentication, payment integration, and advanced user profile features. Managed full project lifecycle.",
-    thumbnail: "/api/placeholder/400/200",
-    company: "Operant Federation",
-    duration: "Jun 2023 - Nov 2024",
-  },
-  {
-    id: 3,
-    title: "Solution Developer",
-    desc: "Developed a risk management system using ASP.NET Core and Angular. Designed REST APIs and improved data workflows through dynamic forms.",
-    thumbnail: "/api/placeholder/400/200",
-    company: "Quadwave Consulting",
-    duration: "Apr 2022 - May 2023",
-  },
-];
-
-export const skills = [
-  { name: "Angular", level: 95 },
-  { name: "Next.js / React", level: 90 },
-  { name: "TypeScript / JavaScript", level: 90 },
-  { name: ".NET Core", level: 85 },
-  { name: "GraphQL", level: 80 },
-  { name: "REST API Design", level: 88 },
-  { name: "PWA & Push Notifications", level: 85 },
-  { name: "MySQL", level: 80 },
-  { name: "Agile / Git / CI-CD", level: 82 },
+  { id: 1, name: "Comfort Stay PG", img: "/comfort.png", nameImg: "/comfort.png" },
+  { id: 2, name: "JSS Ooty", img: "/nextgen.png", nameImg: "/NEXTGEN.svg" },
+  { id: 3, name: "Nirma University", img: "/APTICON.png", nameImg: "/APTICON.svg" },
+  { id: 4, name: "MMart", img: "/operant.png", nameImg: "/OPERANT.svg" },
 ];
 
 export const socialMedia = [

@@ -49,7 +49,7 @@ export const products = [
     clients: ["MMart"],
     description: "A high-performance e-commerce engine enabling local businesses to digitize their inventory and scale their operations with a premium, mobile-first shopping experience.",
     features: ["Intuitive Store Dashboard", "Seamless Order Management", "Real-Time Inventory Control", "Optimized Mobile Experience", "Integrated Delivery Logistics"],
-    img: "/Proj2.png", // Need relevant image
+    img: "/m-mart1.png", // Need relevant image
     iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/fm.svg"],
     link: "#", // Add link if available
   }
@@ -68,7 +68,7 @@ export const caseStudies = [
       { label: "Error Rate", value: "0%" },
       { label: "Active Users", value: "5K+" }
     ],
-    image: "/comfort.png"
+    image: "/stay-smart.png"
   },
   {
     id: 2,
@@ -96,7 +96,7 @@ export const caseStudies = [
       { label: "Onboarding Time", value: "<48h" },
       { label: "Delivery Efficiency", value: "+25%" }
     ],
-    image: "/Proj3.png"
+    image: "/m-mart3.png"
   }
 ];
 

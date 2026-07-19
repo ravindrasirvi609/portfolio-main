@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
-type Product = { _id: string; description: string; placeStored: string };
+type Product = { _id: string; description: string; placeStored: string; packages: number; quantity: number; rate: number };
 
 const formCss = `
 @page { size:A4; margin:0; } * { box-sizing:border-box; } body { margin:0; color:#111; font-family:Arial, 'Noto Sans Devanagari', sans-serif; } .sheet { width:210mm; height:297mm; overflow:hidden; padding:5.5mm 7mm 5mm; page-break-after:always; position:relative; } .sheet:last-child{page-break-after:auto} .title{text-align:center;font-size:17pt;font-weight:700;letter-spacing:.15mm;border-bottom:.35mm solid #111;padding-bottom:1mm;white-space:nowrap}.hindi{font-family:'Noto Sans Devanagari',Mangal,sans-serif}.address{height:29mm;border-bottom:.35mm solid #111;display:grid;grid-template-columns:57% 43%;font-size:10pt}.from{padding:3mm 0}.bank{border-left:.35mm solid #111;padding:2mm 3mm;position:relative}.bank-name{font-weight:700;font-size:14pt;font-style:italic;text-align:center;letter-spacing:.4mm}.bank-sub{text-align:center;font-size:7pt}.branch-line{position:absolute;right:3mm;bottom:3mm;width:72%;border-bottom:.3mm solid #111;text-align:right;padding-bottom:0}.bank-date{height:10mm;text-align:center;padding-top:1mm;font-size:10pt}.intro{font-size:9.5pt;line-height:1.55;padding:2mm 0 2mm}.line{display:inline-block;width:57mm;border-bottom:.3mm solid #111;height:3mm;vertical-align:middle}.stock{width:100%;border-collapse:collapse;table-layout:fixed;font-size:8.5pt}.stock th,.stock td{border:.3mm solid #111}.stock th{text-align:center;height:15mm;font-weight:700;vertical-align:middle;line-height:1.25}.stock .desc{width:35%}.stock .place{width:20%}.stock .pkg{width:11%}.stock .qty{width:11%}.stock .rate{width:9%}.stock td{vertical-align:top;padding:1.2mm 1.5mm}.stock .writing-area{height:164mm;padding:0}.stock.compact .writing-area{height:49mm}.product-lines{padding:1.3mm 1.5mm;line-height:7mm;overflow:hidden;height:100%}.stock .total td{height:8mm;font-weight:700;vertical-align:middle}.continued{text-align:right;font-size:8.5pt;margin-top:1mm}.details{display:grid;grid-template-columns:57% 43%;font-size:8.5pt;line-height:1.35}.details-left{border-right:.3mm solid #111}.metric{height:12.5mm;border-bottom:.3mm solid #111;padding:1.5mm;position:relative;padding-right:28%}.metric:after{content:"";position:absolute;top:0;bottom:0;right:26%;border-left:.3mm solid #111}.basis{padding:2mm 2.5mm}.basis h3{font-size:10pt;margin:0 0 1mm;text-align:center}.check{display:flex;gap:2mm;margin:2.3mm 0}.box{height:7mm;width:7mm;border:.3mm solid #111;flex:none}.declaration{font-size:8.5pt;line-height:1.35;padding:3mm 0 4mm}.sign-row{display:grid;grid-template-columns:63% 37%;font-size:8.5pt}.calc{border-left:.3mm solid #111;padding:2mm 4mm;min-height:72mm}.calc-sign{text-align:center;margin-top:26mm}.summary{width:100%;border-collapse:collapse;font-size:8.5pt}.summary td{border:.3mm solid #111;height:10mm;padding:1.5mm}.summary td:first-child{width:70%}.foot{font-size:7pt;margin-top:4mm}`;
@@ -21,7 +21,51 @@ function printableFixed(products: Product[]) {
   );
 }
 
-export default function StockStatement() {
+function money(value: number) {
+  return (Number.isFinite(value) ? value : 0).toFixed(2);
+}
+
+function safeNumber(value: unknown) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+}
+
+function normalizeProduct(product: Product): Product {
+  return { ...product, packages: safeNumber(product.packages), quantity: safeNumber(product.quantity), rate: safeNumber(product.rate) };
+}
+
+function printableWithStock(products: Product[]) {
+  const safeProducts = products.map(normalizeProduct);
+  const firstTable = `<td class="writing-area"><div class="product-lines">${safeProducts.map((p) => `<div>${p.packages}</div>`).join("")}</div></td><td class="writing-area"><div class="product-lines">${safeProducts.map((p) => `<div>${p.quantity}</div>`).join("")}</div></td><td class="writing-area"><div class="product-lines">${safeProducts.map((p) => `<div>${p.rate}</div>`).join("")}</div></td><td class="writing-area"><div class="product-lines">${safeProducts.map((p) => `<div>${money(p.quantity * p.rate).split(".")[0]}</div>`).join("")}</div></td><td class="writing-area"><div class="product-lines">${safeProducts.map((p) => `<div>${money(p.quantity * p.rate).split(".")[1]}</div>`).join("")}</div></td>`;
+  const total = safeProducts.reduce((sum, product) => sum + product.quantity * product.rate, 0);
+  return printableFixed(safeProducts)
+    .replace('<td class="writing-area"></td><td class="writing-area"></td><td class="writing-area"></td><td class="writing-area"></td><td class="writing-area"></td>', firstTable)
+    .replace('<tr class="total"><td colspan="2" style="text-align:center">कुल TOTAL</td><td></td><td></td><td></td><td></td><td></td></tr>', `<tr class="total"><td colspan="2" style="text-align:center">कुल TOTAL</td><td></td><td></td><td></td><td>${money(total).split(".")[0]}</td><td>${money(total).split(".")[1]}</td></tr>`);
+}
+
+export default function StockStatementMobileReady() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [query, setQuery] = useState("");
+  const [editing, setEditing] = useState<Product | null>(null);
+  const [form, setForm] = useState({ description: "", placeStored: "", packages: "", quantity: "", rate: "" });
+  const [saving, setSaving] = useState(false);
+  const load = async () => setProducts((await (await fetch("/api/stock-products")).json()).map(normalizeProduct));
+  useEffect(() => { load(); }, []);
+  const visible = useMemo(() => products.filter((product) => Object.values(product).join(" ").toLowerCase().includes(query.toLowerCase())), [products, query]);
+  const reset = () => { setEditing(null); setForm({ description: "", placeStored: "", packages: "", quantity: "", rate: "" }); };
+  const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
+  async function submit(event: FormEvent) {
+    event.preventDefault(); setSaving(true);
+    await fetch("/api/stock-products", { method: editing ? "PATCH" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(editing ? { id: editing._id, ...form } : form) });
+    reset(); setSaving(false); load();
+  }
+  async function remove(id: string) { if (confirm("Delete this product?")) { await fetch(`/api/stock-products?id=${id}`, { method: "DELETE" }); load(); } }
+  function edit(product: Product) { setEditing(product); setForm({ description: product.description, placeStored: product.placeStored, packages: String(product.packages), quantity: String(product.quantity), rate: String(product.rate) }); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  function print() { const popup = window.open("", "_blank"); if (!popup) return; popup.document.write(printableWithStock(products)); popup.document.close(); popup.focus(); setTimeout(() => popup.print(), 300); }
+  return <main className="min-h-screen bg-slate-950 px-4 py-24 text-slate-100"><div className="mx-auto max-w-6xl"><div className="mb-8 flex flex-wrap items-center justify-between gap-4"><div><h1 className="text-3xl font-bold">Stock Statement</h1><p className="mt-1 text-slate-400">Add stock items and generate the Union Bank statement.</p></div><button onClick={print} className="w-full rounded-md bg-cyan-400 px-5 py-3 font-semibold text-slate-950 sm:w-auto">Generate Stock Statement PDF</button></div><div className="grid gap-6 lg:grid-cols-[390px_1fr]"><form onSubmit={submit} className="h-fit rounded-xl border border-slate-700 bg-slate-900 p-5"><h2 className="mb-4 text-xl font-semibold">{editing ? "Edit Product" : "Add Product"}</h2><label className="mb-4 block text-sm">Description of Goods<input required value={form.description} onChange={(event) => update("description", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label><label className="mb-4 block text-sm">Place Stored<input required value={form.placeStored} onChange={(event) => update("placeStored", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label><div className="grid grid-cols-1 gap-4 sm:grid-cols-3"><label className="block text-sm">No. of Pkgs.<input required min="0" step="1" type="number" value={form.packages} onChange={(event) => update("packages", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label><label className="block text-sm">Quantity<input required min="0" step="any" type="number" value={form.quantity} onChange={(event) => update("quantity", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label><label className="block text-sm">Rate<input required min="0" step="0.01" type="number" value={form.rate} onChange={(event) => update("rate", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label></div><div className="mt-5 flex gap-3"><button disabled={saving} className="rounded bg-cyan-400 px-4 py-2 font-semibold text-slate-950">{saving ? "Saving..." : "Save"}</button><button type="button" onClick={reset} className="rounded border border-slate-600 px-4 py-2">Cancel</button></div></form><section className="overflow-hidden rounded-xl border border-slate-700 bg-slate-900"><div className="border-b border-slate-700 p-5"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search product..." className="w-full rounded border border-slate-600 bg-slate-800 p-3" /></div><div className="overflow-x-auto"><table data-stock-products className="w-full text-left"><thead className="bg-slate-800 text-sm text-slate-300"><tr><th className="p-4">Description</th><th className="p-4">Place Stored</th><th className="p-4">Pkgs.</th><th className="p-4">Quantity</th><th className="p-4">Rate</th><th className="p-4">Value</th><th className="p-4">Edit</th><th className="p-4">Delete</th></tr></thead><tbody>{visible.map((product) => <tr key={product._id} className="border-t border-slate-800"><td className="p-4">{product.description}</td><td className="p-4">{product.placeStored}</td><td className="p-4">{product.packages}</td><td className="p-4">{product.quantity}</td><td className="p-4">{product.rate}</td><td className="p-4">₹{money(product.quantity * product.rate)}</td><td className="p-4"><button onClick={() => edit(product)} className="text-cyan-300">Edit</button></td><td className="p-4"><button onClick={() => remove(product._id)} className="text-red-300">Delete</button></td></tr>)}{visible.length === 0 && <tr><td colSpan={8} className="p-8 text-center text-slate-400">No products found.</td></tr>}</tbody></table></div></section></div></div></main>;
+}
+
+function LegacyStockStatement() {
   const [products, setProducts] = useState<Product[]>([]), [query, setQuery] = useState(""), [editing, setEditing] = useState<Product | null>(null), [description, setDescription] = useState(""), [placeStored, setPlaceStored] = useState(""), [saving, setSaving] = useState(false);
   const load = async () => setProducts(await (await fetch("/api/stock-products")).json());
   useEffect(() => { load(); }, []);

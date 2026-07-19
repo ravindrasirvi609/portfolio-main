@@ -272,6 +272,26 @@ body {
   body:has(input[placeholder="Search product..."]) main tbody td[colspan]::before {
     content: "";
   }
+
+  body:has(input[placeholder="Search product..."]) main table[data-stock-products] tbody td:nth-child(-n + 6) {
+    display: grid;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgb(30 41 59);
+  }
+
+  body:has(input[placeholder="Search product..."]) main table[data-stock-products] tbody td:nth-child(1)::before { content: "Description"; }
+  body:has(input[placeholder="Search product..."]) main table[data-stock-products] tbody td:nth-child(2)::before { content: "Place stored"; }
+  body:has(input[placeholder="Search product..."]) main table[data-stock-products] tbody td:nth-child(3)::before { content: "No. of pkgs."; }
+  body:has(input[placeholder="Search product..."]) main table[data-stock-products] tbody td:nth-child(4)::before { content: "Quantity"; }
+  body:has(input[placeholder="Search product..."]) main table[data-stock-products] tbody td:nth-child(5)::before { content: "Rate"; }
+  body:has(input[placeholder="Search product..."]) main table[data-stock-products] tbody td:nth-child(6)::before { content: "Value"; }
+
+  body:has(input[placeholder="Search product..."]) main table[data-stock-products] tbody td:nth-child(7),
+  body:has(input[placeholder="Search product..."]) main table[data-stock-products] tbody td:nth-child(8) {
+    display: inline-flex;
+    width: auto;
+  }
 }
 
 /* Tablet optimizations */

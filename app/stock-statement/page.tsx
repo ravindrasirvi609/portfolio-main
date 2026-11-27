@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 
 type Product = { _id: string; description: string; placeStored: string; packages: number; quantity: number; rate: number; value?: number | null };
 
@@ -83,26 +83,403 @@ function printableWithStock(products: Product[]) {
   return `${head}${productSheets}<section class="sheet">${summary}`;
 }
 
+const emptyForm = { description: "", placeStored: "", packages: "", quantity: "", rate: "", value: "" };
+type FormState = typeof emptyForm;
+
+const rupeeFormat = new Intl.NumberFormat("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function formatRupees(value: number) {
+  return `₹${rupeeFormat.format(Number.isFinite(value) ? value : 0)}`;
+}
+
+const inputClass =
+  "mt-1.5 w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-3 text-base text-slate-100 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/30";
+const buttonBase =
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
+
+function Spinner({ className = "" }: { className?: string }) {
+  return <span aria-hidden="true" className={`inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent ${className}`} />;
+}
+
+function Field({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="block text-sm font-medium text-slate-300">
+      {label}
+      {children}
+    </label>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string | null }) {
+  return (
+    <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+      <p className="text-xs uppercase tracking-wide text-slate-400">{label}</p>
+      {value === null ? <span className="mt-2 block h-6 w-24 animate-pulse rounded bg-slate-800" aria-label="Loading" /> : <p className="mt-1 text-lg font-bold text-slate-100 sm:text-xl">{value}</p>}
+    </div>
+  );
+}
+
+function ProductSkeleton() {
+  return (
+    <div role="status" aria-label="Loading products" className="space-y-3">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="animate-pulse rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+          <div className="flex justify-between gap-3">
+            <div className="h-4 w-2/3 rounded bg-slate-800" />
+            <div className="h-4 w-20 rounded bg-slate-800" />
+          </div>
+          <div className="mt-3 h-3 w-1/3 rounded bg-slate-800" />
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <div className="h-12 rounded-lg bg-slate-800" />
+            <div className="h-12 rounded-lg bg-slate-800" />
+            <div className="h-12 rounded-lg bg-slate-800" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function StockStatementMobileReady() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<Product | null>(null);
-  const [form, setForm] = useState({ description: "", placeStored: "", packages: "", quantity: "", rate: "", value: "" });
+  const [form, setForm] = useState<FormState>(emptyForm);
+  const [formError, setFormError] = useState("");
+  const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const load = async () => setProducts((await (await fetch("/api/stock-products")).json()).map(normalizeProduct));
-  useEffect(() => { load(); }, []);
-  const visible = useMemo(() => products.filter((product) => Object.values(product).join(" ").toLowerCase().includes(query.toLowerCase())), [products, query]);
-  const reset = () => { setEditing(null); setForm({ description: "", placeStored: "", packages: "", quantity: "", rate: "", value: "" }); };
-  const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [toast, setToast] = useState("");
+
+  const load = async () => {
+    try {
+      const response = await fetch("/api/stock-products", { cache: "no-store" });
+      if (!response.ok) throw new Error("load failed");
+      setProducts((await response.json()).map(normalizeProduct));
+      setLoadError("");
+    } catch {
+      setLoadError("Could not load products. Check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(""), 2500);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  const visible = useMemo(
+    () => products.filter((product) => Object.values(product).join(" ").toLowerCase().includes(query.toLowerCase())),
+    [products, query]
+  );
+  const grandTotal = useMemo(() => products.reduce((sum, product) => sum + productValue(product), 0), [products]);
+  const linePreview = (form.value !== "" ? Number(form.value) : Number(form.quantity || 0) * Number(form.rate || 0));
+
+  const update = (key: keyof FormState, value: string) => setForm((current) => ({ ...current, [key]: value }));
+
+  const closeForm = () => {
+    setFormOpen(false);
+    setEditing(null);
+    setForm(emptyForm);
+    setFormError("");
+  };
+
+  const openNew = () => {
+    setEditing(null);
+    setForm(emptyForm);
+    setFormError("");
+    setFormOpen(true);
+  };
+
+  const edit = (product: Product) => {
+    setEditing(product);
+    setForm({
+      description: product.description,
+      placeStored: product.placeStored,
+      packages: String(product.packages),
+      quantity: String(product.quantity),
+      rate: String(product.rate),
+      value: String(productValue(product)),
+    });
+    setFormError("");
+    setFormOpen(true);
+  };
+
   async function submit(event: FormEvent) {
-    event.preventDefault(); setSaving(true);
-    await fetch("/api/stock-products", { method: editing ? "PATCH" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(editing ? { id: editing._id, ...form } : form) });
-    reset(); setSaving(false); load();
+    event.preventDefault();
+    setSaving(true);
+    setFormError("");
+    try {
+      const response = await fetch("/api/stock-products", {
+        method: editing ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editing ? { id: editing._id, ...form } : form),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Could not save the product.");
+      }
+      setToast(editing ? "Product updated" : "Product added");
+      closeForm();
+      await load();
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Could not save the product.");
+    } finally {
+      setSaving(false);
+    }
   }
-  async function remove(id: string) { if (confirm("Delete this product?")) { await fetch(`/api/stock-products?id=${id}`, { method: "DELETE" }); load(); } }
-  function edit(product: Product) { setEditing(product); setForm({ description: product.description, placeStored: product.placeStored, packages: String(product.packages), quantity: String(product.quantity), rate: String(product.rate), value: String(productValue(product)) }); window.scrollTo({ top: 0, behavior: "smooth" }); }
-  function print() { const popup = window.open("", "_blank"); if (!popup) return; popup.document.write(printableWithStock(products)); popup.document.close(); popup.focus(); setTimeout(() => popup.print(), 300); }
-  return <main className="min-h-screen bg-slate-950 px-4 py-24 text-slate-100"><div className="mx-auto max-w-6xl"><div className="mb-8 flex flex-wrap items-center justify-between gap-4"><div><h1 className="text-3xl font-bold">Stock Statement</h1><p className="mt-1 text-slate-400">Add stock items and generate the Union Bank statement.</p></div><button onClick={print} className="w-full rounded-md bg-cyan-400 px-5 py-3 font-semibold text-slate-950 sm:w-auto">Generate Stock Statement PDF</button></div><div className="grid gap-6 lg:grid-cols-[390px_1fr]"><form onSubmit={submit} className="h-fit rounded-xl border border-slate-700 bg-slate-900 p-5"><h2 className="mb-4 text-xl font-semibold">{editing ? "Edit Product" : "Add Product"}</h2><label className="mb-4 block text-sm">Description of Goods<input required value={form.description} onChange={(event) => update("description", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label><label className="mb-4 block text-sm">Place Stored<input required value={form.placeStored} onChange={(event) => update("placeStored", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label><div className="grid grid-cols-1 gap-4 sm:grid-cols-3"><label className="block text-sm">No. of Pkgs.<input required min="0" step="1" type="number" value={form.packages} onChange={(event) => update("packages", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label><label className="block text-sm">Quantity<input required min="0" step="any" type="number" value={form.quantity} onChange={(event) => update("quantity", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label><label className="block text-sm">Rate<input required min="0" step="0.01" type="number" value={form.rate} onChange={(event) => update("rate", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label></div><label className="mt-4 block text-sm">Value (Rs., optional; blank = Quantity × Rate)<input min="0" step="0.01" type="number" value={form.value} onChange={(event) => update("value", event.target.value)} className="mt-1 w-full rounded border border-slate-600 bg-slate-800 p-3" /></label><div className="mt-5 flex gap-3"><button disabled={saving} className="rounded bg-cyan-400 px-4 py-2 font-semibold text-slate-950">{saving ? "Saving..." : "Save"}</button><button type="button" onClick={reset} className="rounded border border-slate-600 px-4 py-2">Cancel</button></div></form><section className="overflow-hidden rounded-xl border border-slate-700 bg-slate-900"><div className="border-b border-slate-700 p-5"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search product..." className="w-full rounded border border-slate-600 bg-slate-800 p-3" /></div><div className="overflow-x-auto"><table data-stock-products className="w-full text-left"><thead className="bg-slate-800 text-sm text-slate-300"><tr><th className="p-4">Description</th><th className="p-4">Place Stored</th><th className="p-4">Pkgs.</th><th className="p-4">Quantity</th><th className="p-4">Rate</th><th className="p-4">Value</th><th className="p-4">Edit</th><th className="p-4">Delete</th></tr></thead><tbody>{visible.map((product) => <tr key={product._id} className="border-t border-slate-800"><td className="p-4">{product.description}</td><td className="p-4">{product.placeStored}</td><td className="p-4">{product.packages}</td><td className="p-4">{product.quantity}</td><td className="p-4">{product.rate}</td><td className="p-4">₹{money(productValue(product))}</td><td className="p-4"><button onClick={() => edit(product)} className="text-cyan-300">Edit</button></td><td className="p-4"><button onClick={() => remove(product._id)} className="text-red-300">Delete</button></td></tr>)}{visible.length === 0 && <tr><td colSpan={8} className="p-8 text-center text-slate-400">No products found.</td></tr>}</tbody></table></div></section></div></div></main>;
+
+  async function remove(product: Product) {
+    if (!confirm(`Delete "${product.description}"?`)) return;
+    setDeletingId(product._id);
+    try {
+      const response = await fetch(`/api/stock-products?id=${product._id}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("delete failed");
+      if (editing?._id === product._id) closeForm();
+      setToast("Product deleted");
+      await load();
+    } catch {
+      setToast("Could not delete the product. Try again.");
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  function print() {
+    const popup = window.open("", "_blank");
+    if (!popup) {
+      setToast("Allow pop-ups to print the statement.");
+      return;
+    }
+    popup.document.write(printableWithStock(products));
+    popup.document.close();
+    popup.focus();
+    setTimeout(() => popup.print(), 300);
+  }
+
+  const actions = (product: Product) => (
+    <div className="grid grid-cols-2 gap-2">
+      <button type="button" onClick={() => edit(product)} disabled={deletingId === product._id} className={`${buttonBase} border border-cyan-400/40 text-cyan-300 hover:bg-cyan-400/10`}>
+        Edit
+      </button>
+      <button type="button" onClick={() => remove(product)} disabled={deletingId === product._id} className={`${buttonBase} border border-red-400/40 text-red-300 hover:bg-red-400/10`}>
+        {deletingId === product._id && <Spinner />}
+        {deletingId === product._id ? "Deleting" : "Delete"}
+      </button>
+    </div>
+  );
+
+  return (
+    <main className="min-h-screen bg-slate-950 pb-28 pt-24 text-slate-100 lg:pb-16 lg:pt-28">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold sm:text-3xl">Stock Statement</h1>
+            <p className="mt-1 text-sm text-slate-400">Add stock items and generate the Union Bank statement.</p>
+          </div>
+          <button
+            type="button"
+            onClick={print}
+            disabled={loading || products.length === 0}
+            className={`${buttonBase} w-full bg-cyan-400 text-slate-950 hover:bg-cyan-300 sm:w-auto`}
+          >
+            Generate PDF
+          </button>
+        </header>
+
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
+          <Stat label="Products" value={loading ? null : String(products.length)} />
+          <Stat label="Total value" value={loading ? null : formatRupees(grandTotal)} />
+        </div>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-[380px_1fr]">
+          {/* Form: bottom sheet on phones, sticky side panel on desktop */}
+          <div className={`${formOpen ? "fixed inset-0 z-50 flex items-end" : "hidden"} lg:static lg:z-auto lg:flex lg:items-start`}>
+            <div aria-hidden="true" onClick={closeForm} className="absolute inset-0 bg-black/70 backdrop-blur-sm lg:hidden" />
+            <form
+              onSubmit={submit}
+              className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-2xl border border-slate-700 bg-slate-900 p-5 shadow-2xl lg:sticky lg:top-28 lg:max-h-none lg:rounded-xl"
+            >
+              <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-slate-700 lg:hidden" />
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h2 className="text-xl font-semibold">{editing ? "Edit product" : "Add product"}</h2>
+                <button type="button" onClick={closeForm} aria-label="Close form" className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-300 hover:bg-slate-800 lg:hidden">
+                  ✕
+                </button>
+              </div>
+
+              {formError && (
+                <div role="alert" className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-200">
+                  {formError}
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <Field label="Description of goods">
+                  <input required autoComplete="off" value={form.description} onChange={(e) => update("description", e.target.value)} className={inputClass} />
+                </Field>
+                <Field label="Place stored">
+                  <input required autoComplete="off" value={form.placeStored} onChange={(e) => update("placeStored", e.target.value)} className={inputClass} />
+                </Field>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="No. of pkgs.">
+                    <input required inputMode="numeric" min="0" step="1" type="number" value={form.packages} onChange={(e) => update("packages", e.target.value)} className={inputClass} />
+                  </Field>
+                  <Field label="Quantity">
+                    <input required inputMode="decimal" min="0" step="any" type="number" value={form.quantity} onChange={(e) => update("quantity", e.target.value)} className={inputClass} />
+                  </Field>
+                  <Field label="Rate (₹)">
+                    <input required inputMode="decimal" min="0" step="0.01" type="number" value={form.rate} onChange={(e) => update("rate", e.target.value)} className={inputClass} />
+                  </Field>
+                  <Field label="Value (₹)">
+                    <input inputMode="decimal" min="0" step="0.01" type="number" placeholder="Auto" value={form.value} onChange={(e) => update("value", e.target.value)} className={inputClass} />
+                  </Field>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Line total: <span className="font-semibold text-slate-200">{formatRupees(linePreview)}</span>
+                  {form.value === "" && " (quantity × rate, unless you enter a value)"}
+                </p>
+              </div>
+
+              <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row">
+                <button type="button" onClick={closeForm} className={`${buttonBase} border border-slate-600 text-slate-200 hover:bg-slate-800 sm:flex-1`}>
+                  Cancel
+                </button>
+                <button type="submit" disabled={saving} className={`${buttonBase} bg-cyan-400 text-slate-950 hover:bg-cyan-300 sm:flex-1`}>
+                  {saving && <Spinner />}
+                  {saving ? "Saving…" : editing ? "Update product" : "Save product"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <section className="min-w-0 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60">
+            <div className="border-b border-slate-800 bg-slate-900 p-4">
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search products or places"
+                aria-label="Search products"
+                disabled={loading}
+                className={`${inputClass} mt-0`}
+              />
+            </div>
+
+            {loadError && (
+              <div role="alert" className="m-4 flex flex-col gap-3 rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200 sm:flex-row sm:items-center sm:justify-between">
+                <span>{loadError}</span>
+                <button type="button" onClick={() => { setLoading(true); load(); }} className={`${buttonBase} border border-red-300/40 text-red-100 hover:bg-red-400/10`}>
+                  Retry
+                </button>
+              </div>
+            )}
+
+            <div className="p-4">
+              {loading ? (
+                <ProductSkeleton />
+              ) : visible.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-slate-700 p-8 text-center">
+                  <p className="font-medium text-slate-200">{products.length === 0 ? "No products yet" : "No products match your search"}</p>
+                  <p className="mt-1 text-sm text-slate-400">{products.length === 0 ? "Add your first stock item to get started." : `Nothing matches "${query}".`}</p>
+                  {products.length === 0 && (
+                    <button type="button" onClick={openNew} className={`${buttonBase} mt-4 bg-cyan-400 text-slate-950 hover:bg-cyan-300`}>
+                      Add product
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <>
+                  {/* Phones: cards */}
+                  <ul className="space-y-3 md:hidden">
+                    {visible.map((product) => (
+                      <li key={product._id} className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="break-words font-semibold text-slate-100">{product.description}</h3>
+                            <p className="mt-1 break-words text-xs text-slate-400">Place: {product.placeStored}</p>
+                          </div>
+                          <p className="shrink-0 text-right font-semibold text-cyan-300">{formatRupees(productValue(product))}</p>
+                        </div>
+                        <dl className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+                          <div className="rounded-lg bg-slate-900 p-2"><dt className="text-slate-500">Pkgs</dt><dd className="mt-0.5 font-medium text-slate-200">{product.packages}</dd></div>
+                          <div className="rounded-lg bg-slate-900 p-2"><dt className="text-slate-500">Qty</dt><dd className="mt-0.5 font-medium text-slate-200">{product.quantity}</dd></div>
+                          <div className="rounded-lg bg-slate-900 p-2"><dt className="text-slate-500">Rate</dt><dd className="mt-0.5 font-medium text-slate-200">{product.rate}</dd></div>
+                        </dl>
+                        <div className="mt-3">{actions(product)}</div>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Tablets and desktop: table */}
+                  <div className="hidden overflow-x-auto md:block">
+                    <table className="w-full min-w-[640px] text-left text-sm">
+                      <thead className="text-xs uppercase tracking-wide text-slate-400">
+                        <tr className="border-b border-slate-800">
+                          <th className="px-3 py-3 font-medium">Description</th>
+                          <th className="px-3 py-3 font-medium">Place</th>
+                          <th className="px-3 py-3 text-right font-medium">Pkgs</th>
+                          <th className="px-3 py-3 text-right font-medium">Qty</th>
+                          <th className="px-3 py-3 text-right font-medium">Rate</th>
+                          <th className="px-3 py-3 text-right font-medium">Value</th>
+                          <th className="px-3 py-3 font-medium"><span className="sr-only">Actions</span></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {visible.map((product) => (
+                          <tr key={product._id} className="border-b border-slate-800/70 hover:bg-slate-800/40">
+                            <td className="px-3 py-3 font-medium text-slate-100">{product.description}</td>
+                            <td className="px-3 py-3 text-slate-300">{product.placeStored}</td>
+                            <td className="px-3 py-3 text-right tabular-nums">{product.packages}</td>
+                            <td className="px-3 py-3 text-right tabular-nums">{product.quantity}</td>
+                            <td className="px-3 py-3 text-right tabular-nums">{product.rate}</td>
+                            <td className="px-3 py-3 text-right tabular-nums text-cyan-300">{formatRupees(productValue(product))}</td>
+                            <td className="px-3 py-3">
+                              <div className="flex justify-end gap-2">
+                                <button type="button" onClick={() => edit(product)} disabled={deletingId === product._id} className={`${buttonBase} px-3 text-cyan-300 hover:bg-cyan-400/10`}>Edit</button>
+                                <button type="button" onClick={() => remove(product)} disabled={deletingId === product._id} className={`${buttonBase} px-3 text-red-300 hover:bg-red-400/10`}>
+                                  {deletingId === product._id && <Spinner />}
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {/* Phone: floating add button */}
+      {!formOpen && (
+        <button
+          type="button"
+          onClick={openNew}
+          className="fixed bottom-5 right-5 z-40 inline-flex h-14 items-center gap-2 rounded-full bg-cyan-400 px-6 font-semibold text-slate-950 shadow-lg shadow-cyan-400/20 transition hover:bg-cyan-300 lg:hidden"
+        >
+          + Add product
+        </button>
+      )}
+
+      {toast && (
+        <div role="status" className="fixed inset-x-4 bottom-24 z-[60] mx-auto max-w-sm rounded-lg bg-slate-100 px-4 py-3 text-center text-sm font-medium text-slate-900 shadow-lg lg:bottom-6">
+          {toast}
+        </div>
+      )}
+    </main>
+  );
 }
 
 function LegacyStockStatement() {

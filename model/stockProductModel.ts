@@ -6,6 +6,9 @@ const fields = {
   packages: { type: Number, required: true, min: 0 },
   quantity: { type: Number, required: true, min: 0 },
   rate: { type: Number, required: true, min: 0 },
+  // Rupee value as written on the stock sheet. Optional: when absent, the
+  // statement falls back to quantity x rate.
+  value: { type: Number, min: 0 },
 };
 
 const stockProductSchema = new mongoose.Schema(fields, { timestamps: true });
@@ -13,7 +16,7 @@ const existingModel = mongoose.models.StockProduct;
 
 // Next.js keeps models alive during hot reload. Extend a cached pre-change
 // model so the new numeric fields are not silently discarded on save.
-if (existingModel && !existingModel.schema.path("packages")) {
+if (existingModel && !existingModel.schema.path("value")) {
   existingModel.schema.add(fields);
 }
 
